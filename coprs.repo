@@ -1,0 +1,43 @@
+[copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable]
+name=Copr repo for kde-gear-unstable owned by solopasha
+baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/kde-gear-unstable/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=False
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/kde-gear-unstable/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+
+[coprdep:copr.fedorainfracloud.org:solopasha:plasma-unstable]
+name=Copr copr.fedorainfracloud.org/solopasha/kde-gear-unstable runtime dependency #1 - solopasha/plasma-unstable
+baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=False
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+
+[copr:copr.fedorainfracloud.org:solopasha:playground]
+name=Copr repo for playground owned by solopasha
+baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/playground/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/playground/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+
+[copr:copr.fedorainfracloud.org:solopasha:kitty]
+name=Copr repo for kitty owned by solopasha
+baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/kitty/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/kitty/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1

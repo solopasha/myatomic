@@ -1,0 +1,4 @@
+repo-packages:
+  - repo: nvidia-kmod
+    packages:
+      - 'kmod-nvidia*'

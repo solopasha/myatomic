@@ -1,0 +1,208 @@
+name: Build and push image
+
+on:
+  push:
+    paths:
+      - '*.yaml'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  nvidia-kmod:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      kernelver: ${{ steps.kernelver.outputs.kernelver }}
+    container:
+      image: registry.fedoraproject.org/fedora:${{ vars.RELEASEVER }}
+      options: --privileged
+
+    steps:
+      - name: Get latest kernel version
+        id: kernelver
+        run: |
+          echo "kernelver=$(dnf -q rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
+
+      - name: Check if kmod is up to date
+        uses: actions/cache/restore@v4
+        id: repocache
+        with:
+          lookup-only: true
+          path: repo
+          key: repo-${{ steps.kernelver.outputs.kernelver }}
+
+      - name: Prepare
+        if: steps.repocache.outputs.cache-hit != 'true'
+        run: |
+          dnf -y up && dnf -y install \
+            createrepo_c \
+            distribution-gpg-keys \
+            git-core \
+            kernel \
+            kernel-devel
+          rpm --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora)
+          rpm --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora)
+          dnf -y --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+            https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+      - name: Checkout
+        if: steps.repocache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+
+      - name: Keys
+        if: steps.repocache.outputs.cache-hit != 'true'
+        env:
+          KMOD_SIGN_KEY: ${{ secrets.KMOD_SIGN_KEY }}
+        run: |
+          echo "$KMOD_SIGN_KEY" | install -Dm0644 /dev/stdin /etc/pki/akmods/private/private_key.priv
+          install -Dm0644 public_key.der /etc/pki/akmods/certs/public_key.der
+
+      - name: Build kmod-nvidia
+        if: steps.repocache.outputs.cache-hit != 'true'
+        run: |
+          dnf -y in --setopt=install_weak_deps=0 akmod-nvidia
+          akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}"
+          modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
+            (cat /var/cache/akmods/nvidia/*-for-*.log && exit 1)
+          mkdir repo
+          cp /var/cache/akmods/nvidia/*.rpm repo
+
+      - name: Create repo
+        if: steps.repocache.outputs.cache-hit != 'true'
+        run: |
+          pushd repo
+          createrepo_c .
+
+      - name: Save repo
+        if: steps.repocache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: repo
+          key: repo-${{ steps.kernelver.outputs.kernelver }}
+
+
+  main:
+    needs: [nvidia-kmod]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    container:
+      image: registry.fedoraproject.org/fedora:${{ vars.RELEASEVER }}
+      options: --privileged
+    env:
+      IMAGENAME: ghcr.io/${{ github.repository }}/kde-unstable-atomic
+      SKOPEO_ARGS: "--sign-by-sigstore-private-key ${{ github.repository_owner }}.private --sign-passphrase-file ${{ github.repository_owner }}.passphrase --retry-times 3 --dest-compress-format zstd"
+
+    steps:
+      - name: Prepare
+        run: |
+          dnf -y up && dnf -y install \
+            bsdtar \
+            buildah \
+            dbus-daemon \
+            distribution-gpg-keys \
+            file \
+            git-core \
+            jq \
+            ostree \
+            podman \
+            rpm-ostree \
+            selinux-policy-targeted \
+            skopeo \
+            tar \
+            zstd
+          cat << EOF > /etc/containers/registries.d/sigstore.yaml
+          docker:
+            $IMAGENAME:
+              use-sigstore-attachments: true
+          EOF
+          cat /etc/containers/registries.d/sigstore.yaml
+          cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
+          cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
+          dnf clean all
+
+      - uses: actions/checkout@v4
+
+      - name: Get buildid
+        id: get-buildid
+        run: |
+          echo "buildid=$(date -u "+%Y%m%d.%H%M")" >> $GITHUB_OUTPUT
+
+      - name: Download repo
+        id: repo-cache
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          path: repo
+          key: repo-${{ needs.nvidia-kmod.outputs.kernelver }}
+
+      - name: Specify repo path
+        run: |
+          sed -i "s|@@PATH@@|$(realpath repo)|" nvidia.repo
+
+      - name: Restore cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: buildcache.tar.zst
+          key: build-${{ steps.get-buildid.outputs.buildid }}
+          restore-keys: build-
+
+      - name: Build
+        id: build
+        run: |
+          if [[ -f "buildcache.tar.zst" ]]; then
+            bsdtar --acls --xattrs -xpzf buildcache.tar.zst
+            rm buildcache.tar.zst
+          fi
+          mkdir -p repo cache
+          pushd repo > /dev/null || exit 1
+          ostree init --repo . --mode=bare-user
+          popd > /dev/null || exit 1
+
+          # Set option to reduce fsync for transient builds
+          ostree --repo=repo config set 'core.fsync' 'false'
+
+          version="$(rpm-ostree compose tree --print-only --repo=repo kinoite.yaml | jq -r '."mutate-os-release"')"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "Composing kinoite ${version}.${{ steps.get-buildid.outputs.buildid }} ..."
+
+          rpm-ostree compose image --cachedir=cache --initialize \
+               --label="quay.expires-after=4w" \
+              "kinoite.yaml" \
+              "kinoite.ociarchive"
+
+      - name: Key
+        env:
+          SIGN_KEY: ${{ secrets.SIGN_KEY }}
+          SIGN_PASSPHRASE: ${{ secrets.SIGN_PASSPHRASE }}
+        run: |
+          echo "$SIGN_KEY" > ${{ github.repository_owner }}.private
+          echo "$SIGN_PASSPHRASE" > ${{ github.repository_owner }}.passphrase
+
+      - name: Push
+        run: |
+          skopeo login --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" ghcr.io
+
+          skopeo copy ${SKOPEO_ARGS} \
+            "oci-archive:kinoite.ociarchive" \
+            "docker://${IMAGENAME}:${{ steps.build.outputs.version }}.${{ steps.get-buildid.outputs.buildid }}"
+
+          skopeo copy ${SKOPEO_ARGS} \
+            "docker://${IMAGENAME}:${{ steps.build.outputs.version }}.${{ steps.get-buildid.outputs.buildid }}" \
+            "docker://${IMAGENAME}:${{ steps.build.outputs.version }}"
+
+      - name: Compress the cache directory manually to preserve xattrs
+        run: |
+          bsdtar --zstd --options zstd:compression-level=16,zstd:threads=0 --acls --xattrs -cpaf buildcache.tar.zst cache
+
+      - name: Save cache
+        id: cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: buildcache.tar.zst
+          key: ${{ steps.cache.outputs.cache-primary-key }}
