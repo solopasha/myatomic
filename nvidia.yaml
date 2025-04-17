@@ -2,3 +2,6 @@ repo-packages:
   - repo: nvidia-kmod
     packages:
       - 'kmod-nvidia*'
+
+packages:
+  - xorg-x11-drv-nvidia-cuda
