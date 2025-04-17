@@ -185,6 +185,9 @@ packages:
   - wl-clipboard
   - htop
   - solopasha-atomic-configs
+  - google-arimo-fonts
+  - google-tinos-fonts
+  - google-cousine-fonts
 packages-x86_64:
   - alsa-sof-firmware
   - amd-ucode-firmware
