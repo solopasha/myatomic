@@ -136,6 +136,7 @@ exclude-packages:
   # See: https://github.com/fedora-silverblue/issue-tracker/issues/646
   - hplip-gui
   - p7zip-plugins
+  - open-sans-fonts
 
 postprocess:
   - |
