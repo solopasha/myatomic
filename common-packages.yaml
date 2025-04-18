@@ -184,6 +184,8 @@ packages:
   - zsh
   - dbus-daemon
   - dbus-x11
+  - rpm-sign-libs
+  - google-droid-sans-fonts
 packages-x86_64:
   - alsa-sof-firmware
   - amd-ucode-firmware
