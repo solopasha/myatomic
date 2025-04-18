@@ -1,0 +1,7 @@
+packages:
+  - virt-manager
+
+exclude-packages:
+  - nbdkit
+  - nbdkit-curl-plugin
+  - nbdkit-ssh-plugin
