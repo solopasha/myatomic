@@ -133,6 +133,7 @@ exclude-packages:
   - hplip-gui
   - p7zip-plugins
   - open-sans-fonts
+  - cups
 
 postprocess:
   - |
@@ -164,7 +165,3 @@ postprocess:
     systemctl preset-all
     rm -rf /etc/systemd/user/*
     systemctl --user --global preset-all
-
-    # Fix triggerin for samba-client in cups package (not supported by rpm-ostree yet)
-    # https://github.com/fedora-silverblue/issue-tracker/issues/532
-    ln -snf /usr/libexec/samba/cups_backend_smb /usr/lib/cups/backend/smb

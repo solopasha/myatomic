@@ -21,7 +21,6 @@ packages:
   - bash-completion
   - bc
   - bind-utils
-  - bluez-cups
   - brcmfmac-firmware
   - brltty
   - btrfs-progs
@@ -33,9 +32,6 @@ packages:
   - coreutils
   - cpio
   - cryptsetup
-  - cups
-  - cups-browsed
-  - cups-filters
   - curl
   - cyrus-sasl-plain
   - default-editor
@@ -74,10 +70,7 @@ packages:
   - gstreamer1-plugins-bad-free
   - gstreamer1-plugins-good
   - gstreamer1-plugins-ugly-free
-  - gutenprint
-  - gutenprint-cups
   - hostname
-  - hplip
   - hunspell
   - hyperv-daemons
   - intel-gpu-firmware
@@ -152,7 +145,6 @@ packages:
   - sssd-common
   - sssd-kcm
   - sudo
-  - system-config-printer-udev
   - systemd
   - systemd-oomd-defaults
   - systemd-resolved
@@ -188,6 +180,10 @@ packages:
   - google-arimo-fonts
   - google-tinos-fonts
   - google-cousine-fonts
+  - intel-media-driver
+  - zsh
+  - dbus-daemon
+  - dbus-x11
 packages-x86_64:
   - alsa-sof-firmware
   - amd-ucode-firmware

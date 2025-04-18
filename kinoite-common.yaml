@@ -28,8 +28,6 @@ packages:
   - mobile-broadband-provider-info
   # Make sure that modem support is installed
   - NetworkManager-ppp
-  # Install gdb to make getting backtraces work with DrKonqi
-  - gdb
   # Explicitely not included via comps
   # See: https://pagure.io/fedora-kde/SIG/issue/295
   - plasma-welcome-fedora
@@ -54,3 +52,4 @@ exclude-packages:
   - mariadb-server-utils
   - maliit-keyboard
   - kio-admin
+  - audiocd-kio
