@@ -16,15 +16,18 @@ jobs:
       contents: read
     outputs:
       kernelver: ${{ steps.kernelver.outputs.kernelver }}
+      nvidiaver: ${{ steps.kernelver.outputs.nvidiaver }}
     container:
       image: registry.fedoraproject.org/fedora:${{ vars.RELEASEVER }}
       options: --privileged
 
     steps:
-      - name: Get latest kernel version
+      - name: Get latest kernel and nvidia version
         id: kernelver
         run: |
           echo "kernelver=$(dnf -q rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
+          echo "nvidiaver=$(dnf -q --repofrompath='rpmfusion,https://download1.rpmfusion.org/nonfree/fedora/releases/$releasever/Everything/$basearch/os/' \
+                          --repo=rpmfusion rq xorg-x11-drv-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
 
       - name: Check if kmod is up to date
         uses: actions/cache/restore@v4
@@ -32,7 +35,7 @@ jobs:
         with:
           lookup-only: true
           path: repo
-          key: repo-${{ steps.kernelver.outputs.kernelver }}
+          key: repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
 
       - name: Prepare
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -41,8 +44,8 @@ jobs:
             createrepo_c \
             distribution-gpg-keys \
             git-core \
-            kernel \
-            kernel-devel
+            kernel-${{ steps.kernelver.outputs.kernelver }} \
+            kernel-devel-${{ steps.kernelver.outputs.kernelver }}
           rpm --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora)
           rpm --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora)
           dnf -y --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
@@ -63,7 +66,7 @@ jobs:
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          dnf -y in --setopt=install_weak_deps=0 akmod-nvidia
+          dnf -y in --setopt=install_weak_deps=0 akmod-nvidia-${{ steps.kernelver.outputs.nvidiaver }}
           akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}"
           modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
             (cat /var/cache/akmods/nvidia/*-for-*.log && exit 1)
@@ -81,7 +84,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: repo
-          key: repo-${{ steps.kernelver.outputs.kernelver }}
+          key: repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
 
 
   main:
@@ -138,7 +141,7 @@ jobs:
         with:
           fail-on-cache-miss: true
           path: repo
-          key: repo-${{ needs.nvidia-kmod.outputs.kernelver }}
+          key: repo-${{ needs.nvidia-kmod.outputs.kernelver }}-${{ needs.nvidia-kmod.outputs.nvidiaver }}
 
       - name: Specify repo path
         run: |
