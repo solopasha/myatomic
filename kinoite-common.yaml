@@ -53,3 +53,8 @@ exclude-packages:
   - maliit-keyboard
   - kio-admin
   - audiocd-kio
+  - cryfs
+  - fuse-encfs
+  - kde-inotify-survey
+  - ibus
+  - xwaylandvideobridge
