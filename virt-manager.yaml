@@ -10,7 +10,6 @@ packages:
   - libvirt-daemon-lock
   - libvirt-daemon-plugin-lockd
   - libvirt-daemon-proxy
-  - libvirt-dbus
   - qemu-kvm
   - virt-install
   - virt-manager

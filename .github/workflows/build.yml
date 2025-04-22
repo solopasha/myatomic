@@ -34,13 +34,15 @@ jobs:
         id: repocache
         with:
           lookup-only: true
-          path: repo
-          key: repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
+          path: nvidia-kmod-repo
+          key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
 
       - name: Prepare
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
           dnf -y up && dnf -y install \
+            gnupg2 \
+            rpm-sign \
             createrepo_c \
             distribution-gpg-keys \
             git-core \
@@ -51,6 +53,12 @@ jobs:
           dnf -y --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
             https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
+          cat << EOF > ~/.rpmmacros
+          %_signature gpg
+          %_gpg_name ${{ github.repository_owner }}
+          %_gpgbin /usr/bin/gpg2
+          EOF
+
       - name: Checkout
         if: steps.repocache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
@@ -59,9 +67,12 @@ jobs:
         if: steps.repocache.outputs.cache-hit != 'true'
         env:
           KMOD_SIGN_KEY: ${{ secrets.KMOD_SIGN_KEY }}
+          GPGKEY: ${{ secrets.GPGKEY }}
         run: |
           echo "$KMOD_SIGN_KEY" | install -Dm0644 /dev/stdin /etc/pki/akmods/private/private_key.priv
           install -Dm0644 public_key.der /etc/pki/akmods/certs/public_key.der
+          echo "$GPGKEY" > ${{ github.repository_owner }}.private
+          gpg --import ${{ github.repository_owner }}.private
 
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -70,25 +81,37 @@ jobs:
           akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}"
           modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
             (cat /var/cache/akmods/nvidia/*-for-*.log && exit 1)
-          mkdir repo
-          cp /var/cache/akmods/nvidia/*.rpm repo
+          mkdir nvidia-kmod-repo
+          cp /var/cache/akmods/nvidia/*.rpm nvidia-kmod-repo
+
+      - name: Sign
+        if: steps.repocache.outputs.cache-hit != 'true'
+        run: |
+          rpm --addsign ./nvidia-kmod-repo/*.rpm
 
       - name: Create repo
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          pushd repo
+          pushd nvidia-kmod-repo
           createrepo_c .
 
       - name: Save repo
         if: steps.repocache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: repo
-          key: repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
+          path: nvidia-kmod-repo
+          key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
+
+  openh264:
+    uses: ./.github/workflows/build-rpm.yaml
+    secrets:
+      gpgkey: ${{ secrets.GPGKEY }}
+    with:
+      package: openh264
 
 
   main:
-    needs: [nvidia-kmod]
+    needs: [nvidia-kmod, openh264]
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -123,7 +146,6 @@ jobs:
             $IMAGENAME:
               use-sigstore-attachments: true
           EOF
-          cat /etc/containers/registries.d/sigstore.yaml
           cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
           cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
           dnf clean all
@@ -135,18 +157,6 @@ jobs:
         run: |
           echo "buildid=$(date -u "+%Y%m%d.%H%M")" >> $GITHUB_OUTPUT
 
-      - name: Download repo
-        id: repo-cache
-        uses: actions/cache/restore@v4
-        with:
-          fail-on-cache-miss: true
-          path: repo
-          key: repo-${{ needs.nvidia-kmod.outputs.kernelver }}-${{ needs.nvidia-kmod.outputs.nvidiaver }}
-
-      - name: Specify repo path
-        run: |
-          sed -i "s|@@PATH@@|$(realpath repo)|" nvidia.repo
-
       - name: Restore cache
         id: cache
         uses: actions/cache/restore@v4
@@ -155,9 +165,29 @@ jobs:
           key: build-${{ steps.get-buildid.outputs.buildid }}
           restore-keys: build-
 
+      - name: Download nvidia repo
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          path: nvidia-kmod-repo
+          key: nvidia-kmod-repo-${{ needs.nvidia-kmod.outputs.kernelver }}-${{ needs.nvidia-kmod.outputs.nvidiaver }}
+
+      - name: Download openh264 repo
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          path: openh264-repo
+          key: openh264-repo
+
+      - name: Specify repo path
+        run: |
+          sed -i "s|@@PATH@@|$(realpath nvidia-kmod-repo)|" nvidia.repo
+          sed -i "s|@@PATH@@|$(realpath openh264-repo)|" openh264.repo
+
       - name: Build
         id: build
         run: |
+          cp RPM-GPG-KEY-${{ github.repository_owner }} /etc/pki/rpm-gpg/
           if [[ -f "buildcache.tar.zst" ]]; then
             bsdtar --acls --xattrs -xpzf buildcache.tar.zst
             rm buildcache.tar.zst

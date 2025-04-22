@@ -49,8 +49,6 @@ packages:
   - kernel-modules-extra
   # Do not include "full" Git as it brings in Perl
   - git-core
-  # Explicitely add Git docs
-  - git-core-doc
   # Required until we've completed the move to systemd-sysusers
   # See: https://github.com/fedora-silverblue/issue-tracker/issues/362
   - nss-altfiles

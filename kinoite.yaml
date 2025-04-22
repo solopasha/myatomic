@@ -4,7 +4,7 @@ include:
 repos:
   - fedora
   - updates
-  - fedora-cisco-openh264
+  - openh264-override
   - copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
   - coprdep:copr.fedorainfracloud.org:solopasha:plasma-unstable
   - rpmfusion-free

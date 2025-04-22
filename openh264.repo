@@ -1,5 +1,5 @@
-[nvidia-kmod]
-name=kmod-nvidia
+[openh264-override]
+name=openh264
 baseurl=@@PATH@@
 enabled=1
 gpgcheck=1

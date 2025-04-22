@@ -2,16 +2,11 @@ packages:
   - fprintd-pam
   - kde-settings-pulseaudio
   - libappindicator-gtk3
-  - mesa-dri-drivers
-  - mesa-vulkan-drivers
-  - NetworkManager-config-connectivity-fedora
   - phonon-qt6-backend-vlc
   - pinentry-qt
-  - plymouth-system-theme
   - samba-usershares
   - sddm
   - signon-kwallet-extension
-  - systemd-oomd-defaults
   - udisks2
   - vlc-plugin-gstreamer
 
@@ -57,7 +52,6 @@ repo-packages:
   - repo: copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
     packages:
       - ark
-      - colord-kde
       - dolphin
       - ffmpegthumbs
       - filelight
