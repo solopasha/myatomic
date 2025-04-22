@@ -81,7 +81,6 @@ packages:
   - iwlwifi-mvm-firmware
   - kbd
   - less
-  - libertas-firmware
   - libglvnd-gles
   - linux-firmware
   - logrotate
@@ -92,7 +91,6 @@ packages:
   - mesa-dri-drivers
   - mesa-vulkan-drivers
   - mpage
-  - mt7xxx-firmware
   - mtr
   - nfs-utils
   - nss-altfiles
@@ -129,7 +127,6 @@ packages:
   - setup
   - shadow-utils
   - sos
-  - speech-dispatcher
   - spice-vdagent
   - spice-webdavd
   - sudo
@@ -174,6 +171,7 @@ packages:
   - dbus-x11
   - rpm-sign-libs
   - google-droid-sans-fonts
+  - abattis-cantarell-fonts
 packages-x86_64:
   - alsa-sof-firmware
   - amd-ucode-firmware
