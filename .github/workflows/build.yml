@@ -25,7 +25,7 @@ jobs:
       - name: Get latest kernel and nvidia version
         id: kernelver
         run: |
-          echo "kernelver=$(dnf -q rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
+          echo "kernelver=$(dnf -q --refresh rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
           echo "nvidiaver=$(dnf -q --repofrompath='rpmfusion,https://download1.rpmfusion.org/nonfree/fedora/releases/$releasever/Everything/$basearch/os/' \
                           --repo=rpmfusion rq xorg-x11-drv-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
 
