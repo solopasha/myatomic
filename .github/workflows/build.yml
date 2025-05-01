@@ -27,7 +27,9 @@ jobs:
         run: |
           echo "kernelver=$(dnf -q --refresh rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
           echo "nvidiaver=$(dnf -q --repofrompath='rpmfusion,https://download1.rpmfusion.org/nonfree/fedora/releases/$releasever/Everything/$basearch/os/' \
-                          --repo=rpmfusion rq xorg-x11-drv-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
+                          --repofrompath='rpmfusion-updates,https://download1.rpmfusion.org/nonfree/fedora/updates/$releasever/$basearch/' \
+                          --disablerepo=\* --enablerepo=rpmfusion --enablerepo=rpmfusion-updates \
+                          rq xorg-x11-drv-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
 
       - name: Check if kmod is up to date
         uses: actions/cache/restore@v4
