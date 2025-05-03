@@ -58,3 +58,5 @@ exclude-packages:
   - kde-inotify-survey
   - ibus
   - xwaylandvideobridge
+  - startup-notification
+  - plasma-workspace-wallpapers

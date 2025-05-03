@@ -135,6 +135,23 @@ exclude-packages:
   - open-sans-fonts
   - cups
   - akmods
+  - orca
+  - fedora-chromium-config-kde
+  - xrandr
+  - low-memory-monitor
+  - memstrack
+  - mt7xxx-firmware
+  - speech-dispatcher
+  - xdriinfo
+  - udftools
+  - polkit-pkla-compat
+  - qatlib-service
+  - net-tools
+  - glibc-all-langpacks
+  - geolite2-country
+  - geolite2-city
+  - python3-boto3
+  - python3-botocore
 
 postprocess:
   - |

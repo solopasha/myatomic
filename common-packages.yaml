@@ -20,7 +20,6 @@ packages:
   - bc
   - bind-utils
   - brcmfmac-firmware
-  - brltty
   - btrfs-progs
   - bzip2
   - chrony
@@ -61,7 +60,6 @@ packages:
   - fwupd
   - gamemode
   - glibc
-  - glibc-all-langpacks
   - gnupg2
   - gstreamer1-plugin-dav1d
   - gstreamer1-plugin-libav
@@ -90,7 +88,6 @@ packages:
   - mdadm
   - mesa-dri-drivers
   - mesa-vulkan-drivers
-  - mpage
   - mtr
   - nfs-utils
   - nss-altfiles
@@ -98,7 +95,6 @@ packages:
   - ntfs-3g
   - ntfsprogs
   - nvidia-gpu-firmware
-  - nxpwireless-firmware
   - open-vm-tools-desktop
   - opensc
   - openssh-clients
@@ -107,6 +103,7 @@ packages:
   - pciutils
   - pipewire-alsa
   - pipewire-gstreamer
+  - pipewire-jack-audio-connection-kit
   - pipewire-pulseaudio
   - pipewire-utils
   - plocate
@@ -172,10 +169,13 @@ packages:
   - rpm-sign-libs
   - google-droid-sans-fonts
   - abattis-cantarell-fonts
+  - glibc-langpack-de
+  - glibc-langpack-en
+  - glibc-langpack-ru
+
 packages-x86_64:
   - alsa-sof-firmware
   - amd-ucode-firmware
-  - cirrus-audio-firmware
   - intel-audio-firmware
   - intel-vsc-firmware
   - libva-intel-media-driver

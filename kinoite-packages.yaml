@@ -6,7 +6,6 @@ packages:
   - pinentry-qt
   - samba-usershares
   - sddm
-  - signon-kwallet-extension
   - udisks2
   - vlc-plugin-gstreamer
 
@@ -27,6 +26,7 @@ repo-packages:
       - kwin
       - pam-kwallet
       - plasma-breeze
+      - plasma-browser-integration
       - plasma-desktop
       - plasma-desktop-doc
       - plasma-discover
@@ -42,7 +42,6 @@ repo-packages:
       - plasma-vault
       - plasma-welcome
       - plasma-workspace
-      - plasma-workspace-wallpapers
       - plasma-workspace-wayland
       - polkit-kde
       - sddm-breeze
@@ -73,3 +72,4 @@ repo-packages:
       - krfb
       - kwalletmanager5
       - kwrite
+      - signon-kwallet-extension
