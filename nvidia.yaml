@@ -6,3 +6,12 @@ repo-packages:
 packages:
   - xorg-x11-drv-nvidia-cuda
   - xorg-x11-drv-nvidia-power
+
+postprocess:
+  - |
+    #!/usr/bin/bash
+    set -xeuo pipefail
+
+    cat > /usr/lib/bootc/kargs.d/00-nvidia.toml << 'EOF'
+    kargs = ["rd.driver.blacklist=nouveau", "modprobe.blacklist=nouveau"]
+    EOF

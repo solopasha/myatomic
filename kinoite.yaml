@@ -1,5 +1,125 @@
 include:
-  - kinoite-common.yaml
+  - common.yaml
+
+ref: solopasha/42/${basearch}/kinoite-unstable
+rojig:
+  name: fedora-kde
+  summary: "Fedora Kinoite with unstable packages"
+  license: MIT
+
+packages:
+  - fedora-release-kinoite
+  # Make sure that modem support is installed
+  - NetworkManager-ppp
+  # Explicitely not included via comps
+  # See: https://pagure.io/fedora-kde/SIG/issue/295
+  - plasma-welcome-fedora
+  - fprintd-pam
+  - kde-settings-pulseaudio
+  - libappindicator-gtk3
+  - phonon-qt6-backend-vlc
+  - pinentry-qt
+  - samba-usershares
+  - sddm
+  - udisks2
+  - vlc-plugin-gstreamer
+
+repo-packages:
+  - repo: coprdep:copr.fedorainfracloud.org:solopasha:plasma-unstable
+    packages:
+      - bluedevil
+      - breeze-icon-theme
+      - flatpak-kcm
+      - kde-gtk-config
+      - kdeplasma-addons
+      - kf6-baloo-file
+      - kinfocenter
+      - kmenuedit
+      - krdp
+      - kscreen
+      - kscreenlocker
+      - kwin
+      - pam-kwallet
+      - plasma-breeze
+      - plasma-browser-integration
+      - plasma-desktop
+      - plasma-desktop-doc
+      - plasma-discover
+      - plasma-discover-notifier
+      - plasma-discover-rpm-ostree
+      - plasma-disks
+      - plasma-nm
+      - plasma-nm-openconnect
+      - plasma-nm-openvpn
+      - plasma-nm-vpnc
+      - plasma-pa
+      - plasma-systemmonitor
+      - plasma-thunderbolt
+      - plasma-vault
+      - plasma-welcome
+      - plasma-workspace
+      - plasma-workspace-wayland
+      - polkit-kde
+      - sddm-breeze
+      - sddm-kcm
+      - sddm-wayland-plasma
+      - spectacle
+  - repo: copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
+    packages:
+      - ark
+      - dolphin
+      - ffmpegthumbs
+      - filelight
+      - kaccounts-integration-qt6
+      - kaccounts-providers
+      - kamera
+      - kate
+      - kcharselect
+      - kde-connect
+      - kde-partitionmanager
+      - kdebugsettings
+      - kdegraphics-thumbnailers
+      - kdenetwork-filesharing
+      - kdialog
+      - kdnssd
+      - kfind
+      - khelpcenter
+      - kjournald
+      - konsole
+      - krfb
+      - kwalletmanager5
+      - kwrite
+      - signon-kwallet-extension
+
+remove-from-packages:
+  - ["kde-settings", "/usr/share/kde-settings/kde-profile/default/xdg/kwinrc"]
+
+# Make sure the following are not pulled in when Recommended by other packages
+exclude-packages:
+  - plasma-discover-offline-updates
+  - plasma-discover-packagekit
+  - plasma-pk-updates
+  # Manually excluded as recommended by gtk3 (and likely gtk4 in the future)
+  # See https://pagure.io/fedora-kde/SIG/issue/124
+  - tracker
+  - tracker-miners
+  - localsearch
+  - tinysparql
+  # Ensure we do not include X11 support
+  - plasma-x11
+  - plasma-workspace-x11
+  # Exclude mariadb server tools that bring in Perl
+  - mariadb-server-utils
+  - maliit-keyboard
+  - kio-admin
+  - audiocd-kio
+  - cryfs
+  - fuse-encfs
+  - kde-inotify-survey
+  - ibus
+  - xwaylandvideobridge
+  - startup-notification
+  - plasma-workspace-wallpapers
 
 repos:
   - fedora

@@ -2,93 +2,20 @@ releasever: 42
 automatic-version-prefix: "${releasever}.<date:%Y%m%d%H%M>"
 mutate-os-release: "${releasever}"
 
-variables:
-  # Default to Bootable Containers and override in classic ostree manifests
-  bootable_container: true
-  # Exclude Perl by default and override for XFCE & LXQt
-  exclude_perl: true
-  nvidia: true
-
 # Default to `bash` in our container, the same as other containers we ship.
 container-cmd:
   - /usr/bin/bash
 
 include:
-  # Packages common to all variants
-  - common-packages.yaml
   # See: https://gitlab.com/fedora/ostree/sig/-/issues/1
   - bootupd.yaml
   # Dracut configuration for the initramfs
   - initramfs.yaml
-  # Read only sysroot
-  - sysroot-ro.yaml
   # Enable kernel-install support
   - kernel-install.yaml
-  # Enable composefs
   - composefs.yaml
-  - qemu-user-static-x86_64.yaml
-  - virt-manager.yaml
-  # Compress initramfs with zstd
-  - initramfs-zstd.yaml
-
-conditional-include:
-  # Manifests included only for the Bootable Container variants
-  - if: bootable_container == true
-    include:
-      - bootc.yaml
-      - dnf5.yaml
-  - if: exclude_perl == true
-    include:
-      - exclude-perl.yaml
-  - if: nvidia == true
-    include:
-      - nvidia.yaml
-
-packages:
-  # Ensure that we have a kernel. Kernel packages are not in any comps group
-  - kernel
-  - kernel-modules
-  - kernel-modules-extra
-  # Do not include "full" Git as it brings in Perl
-  - git-core
-  # Required until we've completed the move to systemd-sysusers
-  # See: https://github.com/fedora-silverblue/issue-tracker/issues/362
-  - nss-altfiles
-  # Container management
-  - buildah
-  - podman
-  - skopeo
-  # Keep fuse-overlayfs for compatibilty and rootless containers use cases
-  # See: https://github.com/coreos/fedora-coreos-tracker/issues/1749
-  - fuse-overlayfs
-  # See: https://github.com/fedora-silverblue/issue-tracker/issues/503
-  - systemd-container
-  # Provides terminal tools like clear, reset, tput, and tset
-  - ncurses
-  # Flatpak support
-  - flatpak
-  - xdg-desktop-portal
-  # Contains default ostree remote config to be used on client's
-  # system for fetching ostree update
-  - fedora-repos-ostree
-  # the archive repo for more reliable package layering
-  # https://github.com/coreos/fedora-coreos-tracker/issues/400
-  - fedora-repos-archive
-  # Always include at least full English language support by default
-  # https://gitlab.com/fedora/ostree/sig/-/issues/14
-  - langpacks-en
-  # Kept for backward compatibility for AppImages
-  # See: https://gitlab.com/fedora/ostree/sig/-/issues/50
-  - fuse
-  - fuse-libs
-  # Selected packages from the anaconda-tools group. See: https://gitlab.com/fedora/ostree/sig/-/issues/5
-  - dosfstools
-  - lvm2
-  - nvme-cli
-  - xfsprogs
-  # HFS filesystem tools for Apple hardware
-  # See https://github.com/projectatomic/rpm-ostree/issues/1380
-  - hfsplus-tools
+  - qemu-virt-manager.yaml
+  - nvidia.yaml
 
 selinux: true
 documentation: true
@@ -110,18 +37,220 @@ check-groups:
 
 default_target: graphical.target
 
-packages-x86_64:
-  - grub2-efi-ia32
-  - grub2-efi-x64
-  - grub2-pc
-  - efibootmgr
-  - shim-ia32
-  - shim-x64
+packages:
+  - abattis-cantarell-fonts
+  - acl
+  - alsa-sof-firmware
+  - alsa-ucm
+  - alsa-utils
+  - amd-gpu-firmware
+  - amd-ucode-firmware
+  - atheros-firmware
+  - attr
+  - audit
+  - b43-fwcutter
+  - b43-openfwwf
+  - basesystem
+  - bash
+  - bash-color-prompt
+  - bash-completion
+  - bc
+  - bind-utils
+  - bootc
+  - brcmfmac-firmware
+  - btrfs-progs
+  - buildah
+  - bzip2
+  - chrony
+  - cifs-utils
+  - colord
+  - compsize
+  - coreutils
+  - cpio
+  - cryptsetup
+  - curl
+  - cyrus-sasl-plain
+  - dbus-daemon
+  - dbus-x11
+  - default-editor
+  - default-fonts-cjk-mono
+  - default-fonts-cjk-sans
+  - default-fonts-cjk-serif
+  - default-fonts-core-emoji
+  - default-fonts-core-math
+  - default-fonts-core-mono
+  - default-fonts-core-sans
+  - default-fonts-core-serif
+  - default-fonts-other-mono
+  - default-fonts-other-sans
+  - default-fonts-other-serif
+  - dhcp-client
+  - dnf5
+  - dnf5-plugins
+  - dnsmasq
+  - dosfstools
+  - e2fsprogs
+  - ethtool
+  - exfatprogs
+  - fedora-bookmarks
+  - fedora-chromium-config
+  - fedora-flathub-remote
+  - fedora-repos-archive
+  - fedora-repos-ostree
+  - fedora-workstation-backgrounds
+  - fedora-workstation-repositories
+  - file
+  - filesystem
+  - firewalld
+  - flatpak
+  - fpaste
+  - fuse
+  - fuse-libs
+  - fuse-overlayfs
+  - fwupd
+  - gamemode
+  - git-core
+  - glibc
+  - glibc-langpack-de
+  - glibc-langpack-en
+  - glibc-langpack-ru
+  - gnupg2
+  - google-arimo-fonts
+  - google-cousine-fonts
+  - google-droid-sans-fonts
+  - google-tinos-fonts
+  - gstreamer1-plugin-dav1d
+  - gstreamer1-plugin-libav
+  - gstreamer1-plugins-bad-free
+  - gstreamer1-plugins-good
+  - gstreamer1-plugins-ugly-free
+  - hfsplus-tools
+  - hostname
+  - htop
+  - hunspell
+  - hyperv-daemons
+  - intel-audio-firmware
+  - intel-gpu-firmware
+  - intel-media-driver
+  - intel-vsc-firmware
+  - iproute
+  - iptables-nft
+  - iptstate
+  - iputils
+  - iwlegacy-firmware
+  - iwlwifi-dvm-firmware
+  - iwlwifi-mvm-firmware
+  - kbd
+  - kernel
+  - kernel-modules
+  - kernel-modules-extra
+  - kitty
+  - langpacks-en
+  - less
+  - libavcodec-freeworld
+  - libglvnd-gles
+  - libheif-freeworld
+  - libva-intel-media-driver
+  - linux-firmware
+  - logrotate
+  - lsof
+  - lvm2
+  - man-db
+  - man-pages
+  - mcelog
+  - mdadm
+  - mesa-dri-drivers
+  - mesa-vulkan-drivers
+  - microcode_ctl
+  - mtr
+  - ncurses
+  - NetworkManager
+  - NetworkManager-bluetooth
+  - NetworkManager-config-connectivity-fedora
+  - NetworkManager-wifi
+  - NetworkManager-wwan
+  - nfs-utils
+  - nss-altfiles
+  - nss-altfiles
+  - nss-mdns
+  - ntfs-3g
+  - ntfsprogs
+  - nvidia-gpu-firmware
+  - nvme-cli
+  - open-vm-tools-desktop
+  - opensc
+  - openssh-clients
+  - openssh-server
+  - passwdqc
+  - pciutils
+  - pipewire-alsa
+  - pipewire-gstreamer
+  - pipewire-jack-audio-connection-kit
+  - pipewire-pulseaudio
+  - pipewire-utils
+  - plocate
+  - podman
+  - policycoreutils
+  - policycoreutils-python-utils
+  - prefixdevname
+  - procps-ng
+  - psmisc
+  - qemu-guest-agent
+  - quota
+  - realtek-firmware
+  - rootfiles
+  - rpm
+  - rpm-ostree
+  - rpm-sign-libs
+  - rpmfusion-free-release
+  - rpmfusion-nonfree-release
+  - rsync
+  - samba-client
+  - scx-scheds
+  - selinux-policy-targeted
+  - setup
+  - shadow-utils
+  - skopeo
+  - solopasha-atomic-configs
+  - sos
+  - spice-vdagent
+  - spice-webdavd
+  - sudo
+  - systemd
+  - systemd-container
+  - systemd-oomd-defaults
+  - systemd-resolved
+  - systemd-udev
+  - tar
+  - thermald
+  - time
+  - tiwilink-firmware
+  - toolbox
+  - tree
+  - unzip
+  - uresourced
+  - usb_modeswitch
+  - usbutils
+  - util-linux
+  - vim-minimal
+  - virtualbox-guest-additions
+  - wget2-wget
+  - which
+  - whois
+  - wireplumber
+  - wl-clipboard
+  - words
+  - wpa_supplicant
+  - xdg-desktop-portal
+  - xfsprogs
+  - zip
+  - zram-generator-defaults
+  - zsh
 
 # Make sure the following are not pulled in when Recommended by other packages
 exclude-packages:
   - PackageKit
-  # Do not include dnf4. Classic ostree also exclude dnf5 in another manifest
+  # Do not include dnf4
   - dnf
   - dnf-plugins-core
   # https://github.com/fedora-silverblue/issue-tracker/issues/517
@@ -152,10 +281,13 @@ exclude-packages:
   - geolite2-city
   - python3-boto3
   - python3-botocore
+  - perl-interpreter
+  - perl-libs
+  - cpp
 
 postprocess:
   - |
-    #!/usr/bin/env bash
+    #!/usr/bin/bash
     set -xeuo pipefail
 
     # Work around https://bugzilla.redhat.com/show_bug.cgi?id=1265295
@@ -183,3 +315,11 @@ postprocess:
     systemctl preset-all
     rm -rf /etc/systemd/user/*
     systemctl --user --global preset-all
+
+  - |
+    #!/usr/bin/bash
+    set -xeuo pipefail
+
+    cat > /usr/lib/bootc/kargs.d/10-preempt.toml << 'EOF'
+    kargs = ["preempt=full"]
+    EOF

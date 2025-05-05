@@ -11,6 +11,7 @@ packages:
   - libvirt-daemon-plugin-lockd
   - libvirt-daemon-proxy
   - qemu-kvm
+  - qemu-user-static-aarch64
   - virt-install
   - virt-manager
   - virt-viewer
@@ -19,3 +20,20 @@ exclude-packages:
   - nbdkit
   - nbdkit-curl-plugin
   - nbdkit-ssh-plugin
+  - qemu-user-static-alpha
+  - qemu-user-static-arm
+  - qemu-user-static-cris
+  - qemu-user-static-hexagon
+  - qemu-user-static-hppa
+  - qemu-user-static-loongarch64
+  - qemu-user-static-m68k
+  - qemu-user-static-microblaze
+  - qemu-user-static-mips
+  - qemu-user-static-or1k
+  - qemu-user-static-ppc
+  - qemu-user-static-riscv
+  - qemu-user-static-s390x
+  - qemu-user-static-sh4
+  - qemu-user-static-sparc
+  - qemu-user-static-x86
+  - qemu-user-static-xtensa

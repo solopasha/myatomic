@@ -3,10 +3,16 @@
 # xref https://github.com/coreos/fedora-coreos-tracker/issues/510
 packages:
   - bootupd
+  - efibootmgr
+  - grub2-efi-ia32
+  - grub2-efi-x64
+  - grub2-pc
+  - shim-ia32
+  - shim-x64
 
 postprocess:
   - |
-    #!/bin/bash
+    #!/usr/bin/bash
     set -xeuo pipefail
 
     # Transforms /usr/lib/ostree-boot into a bootupd-compatible update payload
