@@ -7,6 +7,7 @@ container-cmd:
   - /usr/bin/bash
 
 include:
+  - nvidia.yaml
   # See: https://gitlab.com/fedora/ostree/sig/-/issues/1
   - bootupd.yaml
   # Dracut configuration for the initramfs
@@ -15,7 +16,6 @@ include:
   - kernel-install.yaml
   - composefs.yaml
   - qemu-virt-manager.yaml
-  - nvidia.yaml
 
 selinux: true
 documentation: true
@@ -315,11 +315,3 @@ postprocess:
     systemctl preset-all
     rm -rf /etc/systemd/user/*
     systemctl --user --global preset-all
-
-  - |
-    #!/usr/bin/bash
-    set -xeuo pipefail
-
-    cat > /usr/lib/bootc/kargs.d/10-preempt.toml << 'EOF'
-    kargs = ["preempt=full"]
-    EOF

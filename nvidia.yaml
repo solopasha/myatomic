@@ -12,6 +12,6 @@ postprocess:
     #!/usr/bin/bash
     set -xeuo pipefail
 
-    cat > /usr/lib/bootc/kargs.d/00-nvidia.toml << 'EOF'
-    kargs = ["rd.driver.blacklist=nouveau", "modprobe.blacklist=nouveau"]
+    cat > /usr/lib/dracut/dracut.conf.d/00-nvidia.conf << 'EOF'
+    kernel_cmdline+=" rd.driver.blacklist=nouveau "
     EOF
