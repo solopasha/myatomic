@@ -206,9 +206,9 @@ jobs:
           echo "Composing kinoite ${version}.${{ steps.get-buildid.outputs.buildid }} ..."
 
           rpm-ostree compose image --cachedir=cache --initialize \
-               --max-layers 96 \
+              --max-layers 96 --format oci \
               "kinoite.yaml" \
-              "kinoite.ociarchive"
+              "kinoite-build"
 
       - name: Key
         env:
@@ -223,7 +223,7 @@ jobs:
           skopeo login --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" ghcr.io
 
           skopeo copy ${SKOPEO_ARGS} \
-            "oci-archive:kinoite.ociarchive" \
+            "oci:kinoite-build" \
             "docker://${IMAGENAME}:${{ steps.build.outputs.version }}.${{ steps.get-buildid.outputs.buildid }}"
 
           skopeo copy ${SKOPEO_ARGS} \
