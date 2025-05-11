@@ -64,6 +64,8 @@ jobs:
       - name: Checkout
         if: steps.repocache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Keys
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -75,6 +77,7 @@ jobs:
           install -Dm0644 public_key.der /etc/pki/akmods/certs/public_key.der
           echo "$GPGKEY" > ${{ github.repository_owner }}.private
           gpg --import ${{ github.repository_owner }}.private
+          rm ${{ github.repository_owner }}.private
 
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -111,7 +114,6 @@ jobs:
     with:
       package: openh264
 
-
   main:
     needs: [nvidia-kmod, openh264]
     runs-on: ubuntu-latest
@@ -123,7 +125,6 @@ jobs:
       options: --privileged --volume /:/run/host:rw
     env:
       IMAGENAME: ghcr.io/${{ github.repository }}/kde-unstable-atomic
-      SKOPEO_ARGS: "--sign-by-sigstore-private-key ${{ github.repository_owner }}.private --sign-passphrase-file ${{ github.repository_owner }}.passphrase --retry-times 3 --dest-compress-format zstd"
 
     steps:
       - name: Reclaim disk space
@@ -158,6 +159,8 @@ jobs:
           dnf clean all
 
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       # - name: Restore cache
       #   id: cache
@@ -179,7 +182,7 @@ jobs:
         with:
           fail-on-cache-miss: true
           path: openh264-repo
-          key: openh264-repo
+          key: openh264-repo-${{ hashFiles('packages/openh264/openh264.spec') }}
 
       - name: Specify repo path
         run: |
@@ -219,6 +222,8 @@ jobs:
           echo "$SIGN_PASSPHRASE" > ${{ github.repository_owner }}.passphrase
 
       - name: Push
+        env:
+          SKOPEO_ARGS: "--sign-by-sigstore-private-key ${{ github.repository_owner }}.private --sign-passphrase-file ${{ github.repository_owner }}.passphrase --retry-times 3 --dest-compress-format zstd"
         run: |
           skopeo login --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" ghcr.io
 

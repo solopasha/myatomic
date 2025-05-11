@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Check if repo exists
         uses: actions/cache/restore@v4
@@ -85,6 +87,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Download resultdir
         uses: actions/cache/restore@v4
@@ -99,6 +103,7 @@ jobs:
         run: |
           echo "$GPGKEY" > ${{ github.repository_owner }}.private
           gpg --import ${{ github.repository_owner }}.private
+          rm ${{ github.repository_owner }}.private
           rpm --addsign ./${{ inputs.package }}-resultdir/*.rpm
           mv ${{ inputs.package }}-resultdir ${{ inputs.package }}-resultdir-signed
 
