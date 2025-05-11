@@ -1,5 +1,4 @@
 packages:
-  - libguestfs
   - libvirt-daemon-config-network
   - libvirt-daemon-driver-interface
   - libvirt-daemon-driver-network
