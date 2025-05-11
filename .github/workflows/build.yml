@@ -222,13 +222,17 @@ jobs:
         run: |
           skopeo login --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" ghcr.io
 
-          skopeo copy ${SKOPEO_ARGS} \
-            "oci:kinoite-build" \
-            "docker://${IMAGENAME}:${{ steps.build.outputs.version }}.${{ steps.get-buildid.outputs.buildid }}"
+          for i in {1..5}; do
+            skopeo copy ${SKOPEO_ARGS} \
+              "oci:kinoite-build" \
+              "docker://${IMAGENAME}:${{ steps.build.outputs.version }}.${{ steps.get-buildid.outputs.buildid }}" && break || sleep $((5 * i))
+          done
 
-          skopeo copy ${SKOPEO_ARGS} \
-            "docker://${IMAGENAME}:${{ steps.build.outputs.version }}.${{ steps.get-buildid.outputs.buildid }}" \
-            "docker://${IMAGENAME}:${{ steps.build.outputs.version }}"
+          for i in {1..5}; do
+            skopeo copy ${SKOPEO_ARGS} \
+              "docker://${IMAGENAME}:${{ steps.build.outputs.version }}.${{ steps.get-buildid.outputs.buildid }}" \
+              "docker://${IMAGENAME}:${{ steps.build.outputs.version }}" && break || sleep $((5 * i))
+          done
 
       # - name: Compress the cache directory manually to preserve xattrs
       #   run: |
