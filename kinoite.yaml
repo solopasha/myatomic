@@ -51,7 +51,6 @@ repo-packages:
       - plasma-nm
       - plasma-nm-openconnect
       - plasma-nm-openvpn
-      - plasma-nm-vpnc
       - plasma-pa
       - plasma-systemmonitor
       - plasma-thunderbolt
