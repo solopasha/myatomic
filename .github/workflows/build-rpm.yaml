@@ -18,7 +18,7 @@ jobs:
     outputs:
       skip: ${{ steps.repo.outputs.cache-hit }}
     container:
-      image: registry.fedoraproject.org/fedora:${{ vars.RELEASEVER }}
+      image: ghcr.io/solopasha/buildroot:latest
       options: --privileged
 
     steps:

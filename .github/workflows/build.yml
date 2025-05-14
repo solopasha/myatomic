@@ -18,7 +18,7 @@ jobs:
       kernelver: ${{ steps.kernelver.outputs.kernelver }}
       nvidiaver: ${{ steps.kernelver.outputs.nvidiaver }}
     container:
-      image: registry.fedoraproject.org/fedora:${{ vars.RELEASEVER }}
+      image: ghcr.io/solopasha/buildroot:latest
       options: --privileged
 
     steps:
@@ -121,7 +121,7 @@ jobs:
       packages: write
       contents: read
     container:
-      image: registry.fedoraproject.org/fedora:${{ vars.RELEASEVER }}
+      image: ghcr.io/solopasha/buildroot:latest
       options: --privileged --volume /:/run/host:rw
     env:
       IMAGENAME: ghcr.io/${{ github.repository }}/kde-unstable-atomic
