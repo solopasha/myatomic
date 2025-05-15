@@ -4,9 +4,14 @@ on:
   push:
     paths:
       - '.github/workflows/buildroot.yml'
+      - 'Dockerfile'
   workflow_dispatch:
   schedule:
     - cron: '25 5 * * *'
+
+concurrency:
+  group: docker-build
+  cancel-in-progress: true
 
 jobs:
   docker:
