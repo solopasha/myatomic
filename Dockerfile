@@ -24,4 +24,6 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
             selinux-policy-targeted \
             skopeo \
             tar \
-            zstd
+            zstd && \
+            dnf clean all && \
+    useradd -m -G mock builduser
