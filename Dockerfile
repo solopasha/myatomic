@@ -21,6 +21,7 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
             rpm-ostree \
             rpm-sign \
             rpmdevtools \
+            rsync \
             selinux-policy-targeted \
             skopeo \
             tar \
