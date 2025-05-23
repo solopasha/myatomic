@@ -4,7 +4,7 @@ include:
 ref: solopasha/42/${basearch}/kinoite-unstable
 rojig:
   name: fedora-kde
-  summary: "Fedora Kinoite with unstable packages"
+  summary: 'Fedora Kinoite with unstable packages'
   license: MIT
 
 packages:
@@ -91,7 +91,7 @@ repo-packages:
       - signon-kwallet-extension
 
 remove-from-packages:
-  - ["kde-settings", "/usr/share/kde-settings/kde-profile/default/xdg/kwinrc"]
+  - ['kde-settings', '/usr/share/kde-settings/kde-profile/default/xdg/kwinrc']
 
 # Make sure the following are not pulled in when Recommended by other packages
 exclude-packages:
@@ -130,6 +130,7 @@ repos:
   - rpmfusion-free-updates
   - rpmfusion-nonfree
   - rpmfusion-nonfree-updates
+  - rpmfusion-nonfree-rawhide
   - nvidia-kmod
   - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty

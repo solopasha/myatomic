@@ -30,10 +30,9 @@ jobs:
         id: kernelver
         run: |
           echo "kernelver=$(dnf -q --refresh rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
-          echo "nvidiaver=$(dnf -q --repofrompath='rpmfusion,https://download1.rpmfusion.org/nonfree/fedora/releases/$releasever/Everything/$basearch/os/' \
-                          --repofrompath='rpmfusion-updates,https://download1.rpmfusion.org/nonfree/fedora/updates/$releasever/$basearch/' \
-                          --disablerepo=\* --enablerepo=rpmfusion --enablerepo=rpmfusion-updates \
-                          rq xorg-x11-drv-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
+          echo "nvidiaver=$(dnf -q --repofrompath='rpmfusion,https://download1.rpmfusion.org/nonfree/fedora/development/rawhide/Everything/$basearch/os/' \
+                          --disablerepo=\* --enablerepo=rpmfusion \
+                          rq akmod-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
 
       - name: Check if kmod is up to date
         uses: actions/cache/restore@v4
@@ -58,6 +57,7 @@ jobs:
           rpm --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora)
           dnf -y --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
             https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+          dnf in -y rpmfusion-nonfree-release-rawhide
 
           cat << EOF > ~/.rpmmacros
           %_signature gpg
@@ -86,7 +86,8 @@ jobs:
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          dnf -y in --setopt=install_weak_deps=0 akmod-nvidia-${{ steps.kernelver.outputs.nvidiaver }}
+          echo "%_with_kmod_nvidia_open 1" > /etc/rpm/macros.nvidia-kmod
+          dnf -y in --enablerepo=rpmfusion-nonfree-rawhide --setopt=install_weak_deps=0 akmod-nvidia-${{ steps.kernelver.outputs.nvidiaver }}
           akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}"
           modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
             (cat /var/cache/akmods/nvidia/*-for-*.log && exit 1)
