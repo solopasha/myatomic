@@ -130,7 +130,7 @@ repos:
   - rpmfusion-free-updates
   - rpmfusion-nonfree
   - rpmfusion-nonfree-updates
-  - rpmfusion-nonfree-rawhide
+  - rpmfusion-nonfree-nvidia-driver-rawhide
   - nvidia-kmod
   - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty
