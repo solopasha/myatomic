@@ -30,10 +30,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository_owner }}/buildroot
-          flavor: |
-            latest=true
           tags: |
-            type=sha
+            type=raw,value=latest
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
