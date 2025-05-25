@@ -26,3 +26,9 @@ postprocess:
     cat > /usr/lib/dracut/dracut.conf.d/00-nvidia.conf << 'EOF'
     kernel_cmdline+=" rd.driver.blacklist=nouveau "
     EOF
+
+    cat > /usr/lib/bootc/kargs.d/00-nvidia.toml << 'EOF'
+    kargs = ["rd.driver.blacklist=nouveau", "modprobe.blacklist=nouveau", "nvidia-drm.modeset=1"]
+    EOF
+
+    sed -i 's/omit_drivers/force_drivers/' /usr/lib/dracut/dracut.conf.d/99-nvidia-dracut.conf
