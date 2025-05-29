@@ -18,7 +18,7 @@ jobs:
     outputs:
       skip: ${{ steps.repo.outputs.cache-hit }}
     container:
-      image: ghcr.io/solopasha/buildroot:latest
+      image: ghcr.io/${{ github.repository }}/buildroot:latest
       options: --privileged
 
     steps:

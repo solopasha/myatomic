@@ -22,7 +22,7 @@ jobs:
       kernelver: ${{ steps.kernelver.outputs.kernelver }}
       nvidiaver: ${{ steps.kernelver.outputs.nvidiaver }}
     container:
-      image: ghcr.io/solopasha/buildroot:latest
+      image: ghcr.io/${{ github.repository }}/buildroot:latest
       options: --privileged
 
     steps:
@@ -126,7 +126,7 @@ jobs:
       packages: write
       contents: read
     container:
-      image: ghcr.io/solopasha/buildroot:latest
+      image: ghcr.io/${{ github.repository }}/buildroot:latest
       options: --privileged --volume /:/run/host:rw
     env:
       IMAGENAME: ghcr.io/${{ github.repository }}/kde-unstable-atomic
@@ -134,7 +134,7 @@ jobs:
     steps:
       - name: Reclaim disk space
         run: |
-          rm -rf /run/host/usr/local/lib/android /run/host/usr/share/dotnet /run/host/opt/ghc /run/host/opt/hostedtoolcac
+          rm -rf /run/host/usr/local/lib/android /run/host/usr/share/dotnet /run/host/opt/ghc /run/host/opt/hostedtoolcache
 
       - name: Prepare
         run: |
