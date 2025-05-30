@@ -12,7 +12,6 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
             git-core \
             gnupg2 \
             jq \
-            nosync \
             ostree \
             podman \
             rpm-ostree \
