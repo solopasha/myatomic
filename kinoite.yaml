@@ -123,7 +123,7 @@ exclude-packages:
 repos:
   - fedora
   - updates
-  - openh264-override
+  - fedora-cisco-openh264
   - copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
   - coprdep:copr.fedorainfracloud.org:solopasha:plasma-unstable
   - rpmfusion-free

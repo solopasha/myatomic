@@ -125,15 +125,8 @@ jobs:
           path: nvidia-kmod-repo
           key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
 
-  openh264:
-    uses: ./.github/workflows/build-rpm.yaml
-    secrets:
-      gpgkey: ${{ secrets.GPGKEY }}
-    with:
-      package: openh264
-
   main:
-    needs: [nvidia-kmod, openh264]
+    needs: nvidia-kmod
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -166,17 +159,9 @@ jobs:
           path: nvidia-kmod-repo
           key: nvidia-kmod-repo-${{ needs.nvidia-kmod.outputs.kernelver }}-${{ needs.nvidia-kmod.outputs.nvidiaver }}
 
-      - name: Download openh264 repo
-        uses: actions/cache/restore@v4
-        with:
-          fail-on-cache-miss: true
-          path: openh264-repo
-          key: openh264-repo-${{ hashFiles('packages/openh264/openh264.spec') }}
-
       - name: Specify repo path
         run: |
           sed -i "s|@@PATH@@|$(realpath nvidia-kmod-repo)|" nvidia.repo
-          sed -i "s|@@PATH@@|$(realpath openh264-repo)|" openh264.repo
 
       - name: Get buildid
         id: get-buildid
