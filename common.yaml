@@ -1,6 +1,6 @@
 releasever: 42
-automatic-version-prefix: "${releasever}.<date:%Y%m%d%H%M>"
-mutate-os-release: "${releasever}"
+automatic-version-prefix: '${releasever}.<date:%Y%m%d%H%M>'
+mutate-os-release: '${releasever}'
 
 # Default to `bash` in our container, the same as other containers we ship.
 container-cmd:
@@ -285,6 +285,7 @@ exclude-packages:
   - perl-interpreter
   - perl-libs
   - cpp
+  - vlc-plugins-freeworld
 
 postprocess:
   - |
