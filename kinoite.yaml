@@ -35,7 +35,6 @@ repo-packages:
       - kf6-baloo-file
       - kinfocenter
       - kmenuedit
-      - krdp
       - kscreen
       - kscreenlocker
       - kwin
