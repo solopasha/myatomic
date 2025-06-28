@@ -181,6 +181,7 @@ packages:
   - opensc
   - openssh-clients
   - openssh-server
+  - openssl
   - passwdqc
   - pciutils
   - pipewire-alsa
