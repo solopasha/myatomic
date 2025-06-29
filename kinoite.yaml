@@ -57,7 +57,6 @@ repo-packages:
       - plasma-vault
       - plasma-welcome
       - plasma-workspace
-      - plasma-workspace-wayland
       - polkit-kde
       - sddm-breeze
       - sddm-kcm
