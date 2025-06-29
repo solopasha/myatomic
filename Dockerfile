@@ -7,6 +7,7 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
             buildah \
             dbus-daemon \
             distribution-gpg-keys \
+            fedora-repos-archive \
             file \
             fuse-overlayfs \
             git-core \
