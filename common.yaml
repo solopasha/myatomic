@@ -92,8 +92,6 @@ packages:
   - e2fsprogs
   - ethtool
   - exfatprogs
-  - fedora-bookmarks
-  - fedora-chromium-config
   - fedora-flathub-remote
   - fedora-repos-archive
   - fedora-repos-ostree
@@ -104,8 +102,6 @@ packages:
   - firewalld
   - flatpak
   - fpaste
-  - fuse
-  - fuse-libs
   - fuse-overlayfs
   - fwupd
   - gamemode
@@ -168,7 +164,6 @@ packages:
   - NetworkManager-bluetooth
   - NetworkManager-config-connectivity-fedora
   - NetworkManager-wifi
-  - NetworkManager-wwan
   - nfs-utils
   - nss-altfiles
   - nss-altfiles
@@ -246,7 +241,6 @@ packages:
   - xfsprogs
   - zip
   - zram-generator-defaults
-  - zsh
 
 # Make sure the following are not pulled in when Recommended by other packages
 exclude-packages:
@@ -287,6 +281,8 @@ exclude-packages:
   - cpp
   - vlc-plugins-freeworld
   - sudo
+  - fuse
+  - fuse-libs
 
 postprocess:
   - |
