@@ -217,7 +217,6 @@ packages:
   - sos
   - spice-vdagent
   - spice-webdavd
-  - sudo
   - systemd
   - systemd-container
   - systemd-oomd-defaults
@@ -287,6 +286,7 @@ exclude-packages:
   - perl-libs
   - cpp
   - vlc-plugins-freeworld
+  - sudo
 
 postprocess:
   - |
