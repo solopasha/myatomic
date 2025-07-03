@@ -161,7 +161,6 @@ packages:
   - mtr
   - ncurses
   - NetworkManager
-  - NetworkManager-bluetooth
   - NetworkManager-config-connectivity-fedora
   - NetworkManager-wifi
   - nfs-utils
@@ -283,6 +282,7 @@ exclude-packages:
   - vlc-plugins-freeworld
   - fuse
   - fuse-libs
+  - ModemManager
 
 postprocess:
   - |
