@@ -279,7 +279,6 @@ exclude-packages:
   - perl-interpreter
   - perl-libs
   - cpp
-  - vlc-plugins-freeworld
   - fuse
   - fuse-libs
   - ModemManager
