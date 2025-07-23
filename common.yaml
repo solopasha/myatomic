@@ -127,7 +127,6 @@ packages:
   - hyperv-daemons
   - intel-audio-firmware
   - intel-gpu-firmware
-  - intel-media-driver
   - intel-vsc-firmware
   - iproute
   - iptables-nft
@@ -143,9 +142,7 @@ packages:
   - kitty
   - langpacks-en
   - less
-  - libavcodec-freeworld
   - libglvnd-gles
-  - libheif-freeworld
   - libva-intel-media-driver
   - linux-firmware
   - logrotate
@@ -179,7 +176,6 @@ packages:
   - passwdqc
   - pciutils
   - pipewire-alsa
-  - pipewire-codec-aptx
   - pipewire-gstreamer
   - pipewire-jack-audio-connection-kit
   - pipewire-pulseaudio
@@ -198,8 +194,6 @@ packages:
   - rpm
   - rpm-ostree
   - rpm-sign-libs
-  - rpmfusion-free-release
-  - rpmfusion-nonfree-release
   - rsync
   - samba-client
   - scx-scheds

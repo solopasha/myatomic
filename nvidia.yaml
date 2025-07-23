@@ -3,7 +3,7 @@ repo-packages:
     packages:
       - 'kmod-nvidia*'
 
-  - repo: rpmfusion-nonfree-nvidia-driver-rawhide
+  - repo: nvidia-build
     packages:
       - nvidia-modprobe
       - nvidia-persistenced

@@ -28,24 +28,24 @@ jobs:
     steps:
       - name: Repo
         run: |
-          cat << 'EOF' > /etc/yum.repos.d/rpmfusion-nonfree-nvidia-driver.repo
-          [rpmfusion-nonfree-nvidia-driver-rawhide]
-          name=RPM Fusion for Fedora - Nonfree - NVIDIA Driver
-          baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/43/$basearch/
-          #metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-43&arch=$basearch
-          enabled=1
+          cat << 'EOF' > /etc/yum.repos.d/nvidia-build.repo
+          [nvidia-build]
+          name=solopasha/nvidia-build
+          baseurl=https://github.com/solopasha/nvidia-build/releases/download/
           type=rpm-md
-          gpgcheck=1
-          repo_gpgcheck=0
-          gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-43
           skip_if_unavailable=True
+          gpgcheck=1
+          gpgkey=https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
+          repo_gpgcheck=0
+          enabled=1
+          enabled_metadata=1
           EOF
 
       - name: Get latest kernel and nvidia version
         id: kernelver
         run: |
           echo "kernelver=$(dnf -q --refresh rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
-          echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=rpmfusion-nonfree-nvidia-driver-rawhide \
+          echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=nvidia-build \
                           rq akmod-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
 
       - name: Check if kmod is up to date
@@ -67,10 +67,6 @@ jobs:
             git-core \
             kernel-${{ steps.kernelver.outputs.kernelver }} \
             kernel-devel-${{ steps.kernelver.outputs.kernelver }}
-          rpm --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora)
-          rpm --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora)
-          dnf -y --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-            https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
           cat << EOF > ~/.rpmmacros
           %_signature gpg
@@ -145,8 +141,7 @@ jobs:
             $IMAGENAME:
               use-sigstore-attachments: true
           EOF
-          cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
-          cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
+          rpm --import https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
 
       - uses: actions/checkout@v4
         with:

@@ -3,3 +3,14 @@ name=kmod-nvidia
 baseurl=@@PATH@@
 enabled=1
 gpgcheck=1
+
+[nvidia-build]
+name=solopasha/nvidia-build
+baseurl=https://github.com/solopasha/nvidia-build/releases/download/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
