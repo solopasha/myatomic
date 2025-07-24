@@ -276,6 +276,7 @@ exclude-packages:
   - fuse
   - fuse-libs
   - ModemManager
+  - grubby-dummy
 
 postprocess:
   - |
