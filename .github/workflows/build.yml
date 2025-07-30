@@ -95,7 +95,7 @@ jobs:
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          echo "%_with_kmod_nvidia_open 1" > /etc/rpm/macros.nvidia-kmod
+          echo "%_without_kmod_nvidia_detect 1" > /etc/rpm/macros.nvidia-kmod
           dnf -y in --setopt=install_weak_deps=0 akmod-nvidia-${{ steps.kernelver.outputs.nvidiaver }}
           akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}"
           modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
