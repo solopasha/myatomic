@@ -119,6 +119,7 @@ jobs:
       contents: read
     container:
       image: ghcr.io/${{ github.repository }}/buildroot:latest
+      options: --privileged
     env:
       IMAGENAME: ghcr.io/${{ github.repository }}/kde-unstable-atomic
 
