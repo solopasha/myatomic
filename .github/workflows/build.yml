@@ -23,8 +23,6 @@ jobs:
       nvidiaver: ${{ steps.kernelver.outputs.nvidiaver }}
     container:
       image: ghcr.io/${{ github.repository }}/buildroot:latest
-      options: --privileged
-
     steps:
       - name: Repo
         run: |
@@ -68,12 +66,6 @@ jobs:
             kernel-${{ steps.kernelver.outputs.kernelver }} \
             kernel-devel-${{ steps.kernelver.outputs.kernelver }}
 
-          cat << EOF > ~/.rpmmacros
-          %_signature gpg
-          %_gpg_name ${{ github.repository_owner }}
-          %_gpgbin /usr/bin/gpg2
-          EOF
-
       - name: Checkout
         if: steps.repocache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
@@ -88,9 +80,7 @@ jobs:
         run: |
           echo "$KMOD_SIGN_KEY" | install -Dm0644 /dev/stdin /etc/pki/akmods/private/private_key.priv
           install -Dm0644 public_key.der /etc/pki/akmods/certs/public_key.der
-          echo "$GPGKEY" > ${{ github.repository_owner }}.private
-          gpg --import ${{ github.repository_owner }}.private
-          rm ${{ github.repository_owner }}.private
+          echo "$GPGKEY" | gpg --import
 
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -106,7 +96,7 @@ jobs:
       - name: Sign
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          rpm --addsign ./nvidia-kmod-repo/*.rpm
+          rpm -D "%_gpg_name ${{ github.repository_owner }}" --addsign ./nvidia-kmod-repo/*.rpm
 
       - name: Create repo
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -129,7 +119,6 @@ jobs:
       contents: read
     container:
       image: ghcr.io/${{ github.repository }}/buildroot:latest
-      options: --privileged
     env:
       IMAGENAME: ghcr.io/${{ github.repository }}/kde-unstable-atomic
 
