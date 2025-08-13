@@ -28,5 +28,5 @@ postprocess:
     EOF
 
     cat > /usr/lib/bootc/kargs.d/00-nvidia.toml << 'EOF'
-    kargs = ["rd.driver.blacklist=nouveau,nova_core", "modprobe.blacklist=nouveau"]
+    kargs = ["rd.driver.blacklist=nouveau,nova_core", "modprobe.blacklist=nouveau,nova_core"]
     EOF
