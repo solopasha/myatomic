@@ -184,7 +184,7 @@ jobs:
             --initialize \
             --max-layers 96 \
             --format oci \
-            --label="org.opencontainers.image.version=${{ steps.buildid.outputs.buildid }}" \
+            --label="org.opencontainers.image.version=${{ steps.buildid.outputs.fedora_version }}.${{ steps.buildid.outputs.buildid }}" \
             "kinoite.yaml" \
             "kinoite-build"
 
