@@ -311,3 +311,8 @@ postprocess:
     systemctl preset-all
     rm -rf /etc/systemd/user/*
     systemctl --user --global preset-all
+
+  - |
+    #!/usr/bin/bash
+    set -xeuo pipefail
+    sed 's/@@VER_TO_REPLACE@@/@@IMAGE_VERSION@@/g' -i /usr/lib/os-release
