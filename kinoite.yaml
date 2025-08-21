@@ -83,7 +83,6 @@ repo-packages:
       - kfind
       - khelpcenter
       - kjournald
-      - konsole
       - krfb
       - kwalletmanager5
       - kwrite
@@ -118,6 +117,8 @@ exclude-packages:
   - xwaylandvideobridge
   - startup-notification
   - plasma-workspace-wallpapers
+  - konsole
+  - konsole-part
 
 repos:
   - fedora
