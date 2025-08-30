@@ -41,3 +41,14 @@ gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/kitty/pubkey
 repo_gpgcheck=0
 enabled=1
 enabled_metadata=1
+
+[copr:copr.fedorainfracloud.org:solopasha:plasma-unstable:custom:revert-scrollable]
+name=Copr repo for plasma-unstable:custom:revert-scrollable owned by solopasha
+baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable:custom:revert-scrollable/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1

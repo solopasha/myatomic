@@ -42,8 +42,6 @@ repo-packages:
       - pam-kwallet
       - plasma-breeze
       - plasma-browser-integration
-      - plasma-desktop
-      - plasma-desktop-doc
       - plasma-discover
       - plasma-discover-notifier
       - plasma-discover-rpm-ostree
@@ -58,10 +56,14 @@ repo-packages:
       - plasma-welcome
       - plasma-workspace
       - polkit-kde
-      - sddm-breeze
       - sddm-kcm
       - sddm-wayland-plasma
       - spectacle
+  - repo: copr:copr.fedorainfracloud.org:solopasha:plasma-unstable:custom:revert-scrollable
+    packages:
+      - plasma-desktop
+      - plasma-desktop-doc
+      - sddm-breeze
   - repo: copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
     packages:
       - ark
@@ -125,6 +127,7 @@ repos:
   - updates
   - copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
   - coprdep:copr.fedorainfracloud.org:solopasha:plasma-unstable
+  - copr:copr.fedorainfracloud.org:solopasha:plasma-unstable:custom:revert-scrollable
   - nvidia-kmod
   - nvidia-build
   - copr:copr.fedorainfracloud.org:solopasha:playground
