@@ -42,9 +42,6 @@ repo-packages:
       - pam-kwallet
       - plasma-breeze
       - plasma-browser-integration
-      - plasma-discover
-      - plasma-discover-notifier
-      - plasma-discover-rpm-ostree
       - plasma-disks
       - plasma-nm
       - plasma-nm-openconnect
@@ -91,7 +88,8 @@ repo-packages:
       - signon-kwallet-extension
 
 remove-from-packages:
-  - ['kde-settings', '/usr/share/kde-settings/kde-profile/default/xdg/kwinrc']
+  - ['kde-settings', '/usr/share/kde-settings/kde-profile/default/xdg/kwinrc',
+      '/usr/share/kde-settings/kde-profile/default/xdg/plasma_workspace.notifyrc']
 
 # Make sure the following are not pulled in when Recommended by other packages
 exclude-packages:
@@ -121,6 +119,9 @@ exclude-packages:
   - plasma-workspace-wallpapers
   - konsole
   - konsole-part
+  - plasma-discover
+  - plasma-discover-notifier
+  - plasma-discover-rpm-ostree
 
 repos:
   - fedora
