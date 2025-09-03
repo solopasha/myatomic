@@ -42,7 +42,7 @@ jobs:
       - name: Get latest kernel and nvidia version
         id: kernelver
         run: |
-          echo "kernelver=$(dnf -q --refresh rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
+          echo "kernelver=6.15.10-200.fc42.x86_64" >> $GITHUB_OUTPUT
           echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=nvidia-build \
                           rq akmod-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
 
