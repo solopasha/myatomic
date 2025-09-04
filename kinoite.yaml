@@ -133,4 +133,4 @@ repos:
   - nvidia-build
   - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty
-  - updates-archive
+  - kernel-koji

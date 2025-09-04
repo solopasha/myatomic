@@ -1,0 +1,6 @@
+[kernel-koji]
+name=kernel-koji
+baseurl=@@PATH@@
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch

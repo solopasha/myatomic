@@ -13,14 +13,60 @@ concurrency:
   group: image-build
   cancel-in-progress: true
 
+env:
+  kernel: 6.16.5-200.fc42
+
 jobs:
+  kernel:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    container:
+      image: ghcr.io/${{ github.repository }}/buildroot:latest
+    steps:
+      - name: Check if repo exists
+        if: env.kernel != 'latest'
+        uses: actions/cache/restore@v4
+        id: kernelcache
+        with:
+          lookup-only: true
+          path: kernel-repo
+          key: kernel-repo-${{ env.kernel }}
+
+      - name: Prepare
+        if: steps.kernelcache.outputs.cache-hit != 'true' && env.kernel != 'latest'
+        run: |
+          dnf --nodocs -y -x systemd* install koji
+
+      - name: Download
+        if: steps.kernelcache.outputs.cache-hit != 'true' && env.kernel != 'latest'
+        run: |
+          mkdir kernel-repo
+          pushd kernel-repo > /dev/null
+          koji download-build -a x86_64 -a noarch --key=105ef944 kernel-${{ env.kernel }}
+          rm -rf -- *-debug-* *-uki-virt-* *-selftests-internal-* kernel-doc-*
+
+      - name: Create repo
+        if: steps.kernelcache.outputs.cache-hit != 'true' && env.kernel != 'latest'
+        run: |
+          pushd kernel-repo
+          createrepo_c .
+
+      - name: Save repo
+        if: steps.kernelcache.outputs.cache-hit != 'true' && env.kernel != 'latest'
+        uses: actions/cache/save@v4
+        with:
+          path: kernel-repo
+          key: kernel-repo-${{ env.kernel }}
+
   nvidia-kmod:
     runs-on: ubuntu-latest
+    needs: kernel
     permissions:
       contents: read
     outputs:
       kernelver: ${{ steps.kernelver.outputs.kernelver }}
-      nvidiaver: ${{ steps.kernelver.outputs.nvidiaver }}
+      nvidiaver: ${{ steps.nvidiaver.outputs.nvidiaver }}
     container:
       image: ghcr.io/${{ github.repository }}/buildroot:latest
     steps:
@@ -31,7 +77,7 @@ jobs:
           name=solopasha/nvidia-build
           baseurl=https://github.com/solopasha/nvidia-build/releases/download/
           type=rpm-md
-          skip_if_unavailable=True
+          skip_if_unavailable=False
           gpgcheck=1
           gpgkey=https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
           repo_gpgcheck=0
@@ -39,12 +85,20 @@ jobs:
           enabled_metadata=1
           EOF
 
-      - name: Get latest kernel and nvidia version
+      - name: Get latest kernel version
         id: kernelver
         run: |
-          echo "kernelver=6.15.10-200.fc42.x86_64" >> $GITHUB_OUTPUT
+          if [[ "${{ env.kernel }}" == "latest" ]]; then
+            echo "kernelver=$(dnf -q --refresh rq kernel --latest-limit=1 --qf '%{VERSION}-%{RELEASE}')" >> $GITHUB_OUTPUT
+          else
+            echo "kernelver=${{ env.kernel }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get latest nvidia version
+        id: nvidiaver
+        run: |
           echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=nvidia-build \
-                          rq akmod-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}.%{ARCH}')" >> $GITHUB_OUTPUT
+                          rq akmod-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}')" >> $GITHUB_OUTPUT
 
       - name: Check if kmod is up to date
         uses: actions/cache/restore@v4
@@ -52,19 +106,41 @@ jobs:
         with:
           lookup-only: true
           path: nvidia-kmod-repo
-          key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
+          key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.nvidiaver.outputs.nvidiaver }}
+
+      - name: Download kernel repo
+        if: steps.repocache.outputs.cache-hit != 'true' && env.kernel != 'latest'
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          path: kernel-repo
+          key: kernel-repo-${{ env.kernel }}
+
+      - name: Kernel repo config
+        if: steps.repocache.outputs.cache-hit != 'true' && env.kernel != 'latest'
+        run: |
+          cat << EOF >> /etc/yum.repos.d/image-build.repo
+          [koji-kernel]
+          name=koji-kernel
+          baseurl=file:///${GITHUB_WORKSPACE}/kernel-repo/
+          skip_if_unavailable=False
+          gpgcheck=1
+          gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
+          repo_gpgcheck=0
+          enabled=1
+          enabled_metadata=1
+          priority=96
+          EOF
 
       - name: Prepare
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          dnf -y up && dnf -y install \
-            gnupg2 \
-            rpm-sign \
-            createrepo_c \
-            distribution-gpg-keys \
-            git-core \
+          dnf -y \
+            --setopt=install_weak_deps=0 \
+            install \
             kernel-${{ steps.kernelver.outputs.kernelver }} \
-            kernel-devel-${{ steps.kernelver.outputs.kernelver }}
+            kernel-devel-${{ steps.kernelver.outputs.kernelver }} \
+            akmod-nvidia-${{ steps.nvidiaver.outputs.nvidiaver }}
 
       - name: Checkout
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -72,26 +148,30 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Keys
+      - name: Akmod key
         if: steps.repocache.outputs.cache-hit != 'true'
         env:
           KMOD_SIGN_KEY: ${{ secrets.KMOD_SIGN_KEY }}
-          GPGKEY: ${{ secrets.GPGKEY }}
         run: |
           echo "$KMOD_SIGN_KEY" | install -Dm0644 /dev/stdin /etc/pki/akmods/private/private_key.priv
           install -Dm0644 public_key.der /etc/pki/akmods/certs/public_key.der
-          echo "$GPGKEY" | gpg --import
 
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
           echo "%_without_kmod_nvidia_detect 1" > /etc/rpm/macros.nvidia-kmod
-          dnf -y in --setopt=install_weak_deps=0 akmod-nvidia-${{ steps.kernelver.outputs.nvidiaver }}
-          akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}"
-          modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
+          akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}.$(uname -m)"
+          modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}.$(uname -m)"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
             (cat /var/cache/akmods/nvidia/*-for-*.log && exit 1)
           mkdir nvidia-kmod-repo
           cp /var/cache/akmods/nvidia/*.rpm nvidia-kmod-repo
+
+      - name: Gpg key
+        if: steps.repocache.outputs.cache-hit != 'true'
+        env:
+          GPGKEY: ${{ secrets.GPGKEY }}
+        run: |
+          echo "$GPGKEY" | gpg --import
 
       - name: Sign
         if: steps.repocache.outputs.cache-hit != 'true'
@@ -109,10 +189,12 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: nvidia-kmod-repo
-          key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.kernelver.outputs.nvidiaver }}
+          key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.nvidiaver.outputs.nvidiaver }}
 
   main:
-    needs: nvidia-kmod
+    needs:
+      - kernel
+      - nvidia-kmod
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -139,6 +221,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Download kernel repo
+        if: env.kernel != 'latest'
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          path: kernel-repo
+          key: kernel-repo-${{ env.kernel }}
+
       - name: Download nvidia repo
         uses: actions/cache/restore@v4
         with:
@@ -149,6 +239,12 @@ jobs:
       - name: Specify repo path
         run: |
           sed -i "s|@@PATH@@|$(realpath nvidia-kmod-repo)|" nvidia.repo
+          sed -i "s|@@PATH@@|$(realpath kernel-repo)|" kernel.repo
+
+      - name: Rm non-relevant repos
+        if: env.kernel == 'latest'
+        run: |
+          sed '/kernel-koji/d' -i kinoite.yaml
 
       - name: Figure out version
         id: buildid
