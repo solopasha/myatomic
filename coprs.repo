@@ -52,39 +52,3 @@ gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unsta
 repo_gpgcheck=0
 enabled=1
 enabled_metadata=1
-
-[copr:copr.fedorainfracloud.org:solopasha:plasma-unstable-qt6.10]
-name=Copr repo for plasma-unstable-qt6.10 owned by solopasha
-baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable-qt6.10/fedora-$releasever-$basearch/
-type=rpm-md
-skip_if_unavailable=True
-gpgcheck=1
-gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable-qt6.10/pubkey.gpg
-repo_gpgcheck=0
-enabled=1
-enabled_metadata=1
-priority=97
-
-[copr:copr.fedorainfracloud.org:solopasha:plasma-unstable-qt6.10:custom:revert-scrollable]
-name=Copr repo for plasma-unstable-qt6.10 owned by solopasha
-baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable-qt6.10:custom:revert-scrollable/fedora-$releasever-$basearch/
-type=rpm-md
-skip_if_unavailable=True
-gpgcheck=1
-gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/plasma-unstable-qt6.10/pubkey.gpg
-repo_gpgcheck=0
-enabled=1
-enabled_metadata=1
-priority=97
-
-[coprdep:copr.fedorainfracloud.org:solopasha:qt6-test]
-name=Copr copr.fedorainfracloud.org/solopasha/plasma-unstable-qt6.10 runtime dependency #2 - solopasha/qt6-test
-baseurl=https://download.copr.fedorainfracloud.org/results/solopasha/qt6-test/fedora-$releasever-$basearch/
-type=rpm-md
-skip_if_unavailable=True
-gpgcheck=1
-gpgkey=https://download.copr.fedorainfracloud.org/results/solopasha/qt6-test/pubkey.gpg
-repo_gpgcheck=0
-enabled=1
-enabled_metadata=1
-priority=98
