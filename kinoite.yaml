@@ -38,7 +38,6 @@ repo-packages:
       - kmenuedit
       - kscreen
       - kscreenlocker
-      - kwin
       - pam-kwallet
       - plasma-breeze
       - plasma-browser-integration
@@ -56,7 +55,12 @@ repo-packages:
       - sddm-kcm
       - sddm-wayland-plasma
       - spectacle
-  - repo: copr:copr.fedorainfracloud.org:solopasha:plasma-unstable:custom:revert-scrollable
+  - repo: copr:copr.fedorainfracloud.org:solopasha:plasma-unstable-qt6.10
+    packages:
+      - kwin
+      - layer-shell-qt
+      - plasma-integration
+  - repo: copr:copr.fedorainfracloud.org:solopasha:plasma-unstable-qt6.10:custom:revert-scrollable
     packages:
       - plasma-desktop
       - plasma-desktop-doc
@@ -134,3 +138,6 @@ repos:
   - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty
   - updates-archive
+  - copr:copr.fedorainfracloud.org:solopasha:plasma-unstable-qt6.10
+  - copr:copr.fedorainfracloud.org:solopasha:plasma-unstable-qt6.10:custom:revert-scrollable
+  - coprdep:copr.fedorainfracloud.org:solopasha:qt6-test
