@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export GH_PAGER=
-DAYS_OLD=30
+DAYS_OLD=14
 
 packages=(buildroot kde-unstable-atomic)
 
