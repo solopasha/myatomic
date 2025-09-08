@@ -236,10 +236,147 @@ jobs:
           path: nvidia-kmod-repo
           key: nvidia-kmod-repo-${{ needs.nvidia-kmod.outputs.kernelver }}-${{ needs.nvidia-kmod.outputs.nvidiaver }}
 
+      - name: Set up ORAS
+        uses: oras-project/setup-oras@8d34698a59f5ffe24821f0b48ab62a3de8b64b20
+
+      - name: Download KDE packages
+        run: |
+          packages=(
+              aurorae
+              bluedevil
+              breeze-gtk
+              flatpak-kcm
+              kactivitymanagerd
+              kde-cli-tools
+              kde-gtk-config
+              kdecoration
+              kdeplasma-addons
+              kf6
+              kf6-attica
+              kf6-baloo
+              kf6-bluez-qt
+              kf6-breeze-icons
+              kf6-frameworkintegration
+              kf6-karchive
+              kf6-kauth
+              kf6-kbookmarks
+              kf6-kcalendarcore
+              kf6-kcmutils
+              kf6-kcodecs
+              kf6-kcolorscheme
+              kf6-kcompletion
+              kf6-kconfig
+              kf6-kconfigwidgets
+              kf6-kcontacts
+              kf6-kcoreaddons
+              kf6-kcrash
+              kf6-kdav
+              kf6-kdbusaddons
+              kf6-kdeclarative
+              kf6-kded
+              kf6-kdesu
+              kf6-kdnssd
+              kf6-kdoctools
+              kf6-kfilemetadata
+              kf6-kglobalaccel
+              kf6-kguiaddons
+              kf6-kholidays
+              kf6-ki18n
+              kf6-kiconthemes
+              kf6-kidletime
+              kf6-kimageformats
+              kf6-kio
+              kf6-kirigami
+              kf6-kitemmodels
+              kf6-kitemviews
+              kf6-kjobwidgets
+              kf6-knewstuff
+              kf6-knotifications
+              kf6-knotifyconfig
+              kf6-kpackage
+              kf6-kparts
+              kf6-kpeople
+              kf6-kplotting
+              kf6-kpty
+              kf6-kquickcharts
+              kf6-krunner
+              kf6-kservice
+              kf6-kstatusnotifieritem
+              kf6-ksvg
+              kf6-ktexteditor
+              kf6-ktexttemplate
+              kf6-ktextwidgets
+              kf6-kunitconversion
+              kf6-kuserfeedback
+              kf6-kwallet
+              kf6-kwidgetsaddons
+              kf6-kwindowsystem
+              kf6-kxmlgui
+              kf6-modemmanager-qt
+              kf6-networkmanager-qt
+              kf6-prison
+              kf6-purpose
+              kf6-qqc2-desktop-style
+              kf6-solid
+              kf6-sonnet
+              kf6-syndication
+              kf6-syntax-highlighting
+              kf6-threadweaver
+              kglobalacceld
+              kinfocenter
+              kmenuedit
+              knighttime
+              kpipewire
+              krdp
+              kscreen
+              kscreenlocker
+              ksshaskpass
+              ksystemstats
+              kwayland
+              kwayland-integration
+              kwin
+              kwrited
+              layer-shell-qt
+              libkscreen
+              libksysguard
+              libplasma
+              ocean-sound-theme
+              pam-kwallet
+              plasma-activities
+              plasma-activities-stats
+              plasma-breeze
+              plasma-browser-integration
+              plasma-desktop
+              plasma-disks
+              plasma-integration
+              plasma-milou
+              plasma-nm
+              plasma-pa
+              plasma-print-manager
+              plasma-systemmonitor
+              plasma-systemsettings
+              plasma-thunderbolt
+              plasma-vault
+              plasma-welcome
+              plasma-workspace
+              plasma5support
+              polkit-kde
+              powerdevil
+              qqc2-breeze-style
+              sddm-kcm
+              spectacle
+              xdg-desktop-portal-kde
+          )
+          parallel oras pull ghcr.io/solopasha/kde6-copr/{}:latest-unstable -o kde-repo ::: "${packages[@]}"
+          pushd kde-repo
+          rm -rf -- *-debuginfo-* *-debugsource-*
+          createrepo_c .
+
       - name: Specify repo path
         run: |
           sed -i "s|@@PATH@@|$(realpath nvidia-kmod-repo)|" nvidia.repo
           sed -i "s|@@PATH@@|$(realpath kernel-repo)|" kernel.repo
+          sed -i "s|@@PATH@@|$(realpath kde-repo)|" ghcr-solopasha.repo
 
       - name: Rm non-relevant repos
         if: env.kernel == 'latest'

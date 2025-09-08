@@ -1,0 +1,10 @@
+[ghcr-kde]
+name=solopasha/kde6-copr
+baseurl=@@PATH@@
+type=rpm-md
+skip_if_unavailable=False
+gpgcheck=1
+gpgkey=https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
