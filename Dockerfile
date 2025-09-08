@@ -15,7 +15,6 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
             gnupg2 \
             jq \
             ostree \
-            parallel \
             podman \
             rpm-ostree \
             rpm-sign \

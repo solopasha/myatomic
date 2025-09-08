@@ -56,8 +56,6 @@ repo-packages:
       - sddm-kcm
       - sddm-wayland-plasma
       - spectacle
-  - repo: copr:copr.fedorainfracloud.org:solopasha:plasma-unstable:custom:revert-scrollable
-    packages:
       - plasma-desktop
       - plasma-desktop-doc
       - sddm-breeze

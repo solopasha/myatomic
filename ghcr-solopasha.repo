@@ -1,6 +1,6 @@
 [ghcr-kde]
 name=solopasha/kde6-copr
-baseurl=@@PATH@@
+baseurl=https://solopasha.github.io/kde6-copr/unstable/
 type=rpm-md
 skip_if_unavailable=False
 gpgcheck=1
