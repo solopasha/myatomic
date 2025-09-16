@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir kernel-repo
           pushd kernel-repo > /dev/null
-          koji download-build -a x86_64 -a noarch --key=105ef944 kernel-${{ env.kernel }}
+          koji download-build -a "$(uname -m)" -a noarch --key=105ef944 kernel-${{ env.kernel }}
           rm -rf -- *-debug-* *-uki-virt-* *-selftests-internal-* kernel-doc-*
 
       - name: Create repo
@@ -125,7 +125,7 @@ jobs:
           baseurl=file:///${GITHUB_WORKSPACE}/kernel-repo/
           skip_if_unavailable=False
           gpgcheck=1
-          gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
+          gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-\$releasever-\$basearch
           repo_gpgcheck=0
           enabled=1
           enabled_metadata=1
@@ -215,7 +215,6 @@ jobs:
           EOF
           cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
           cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
-          rpm --import https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
 
       - uses: actions/checkout@v5
         with:
@@ -311,4 +310,10 @@ jobs:
             skopeo copy ${SKOPEO_ARGS} \
               "docker://${IMAGENAME}:${{ steps.buildid.outputs.fedora_version }}.${{ steps.buildid.outputs.buildid }}" \
               "docker://${IMAGENAME}:${{ steps.buildid.outputs.fedora_version }}" && break || sleep $((5 * i))
+          done
+
+          for i in {1..5}; do
+            skopeo copy ${SKOPEO_ARGS} \
+              "docker://${IMAGENAME}:${{ steps.buildid.outputs.fedora_version }}.${{ steps.buildid.outputs.buildid }}" \
+              "docker://${IMAGENAME}:latest" && break || sleep $((5 * i))
           done
