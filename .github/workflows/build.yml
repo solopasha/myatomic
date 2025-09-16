@@ -236,9 +236,6 @@ jobs:
           path: nvidia-kmod-repo
           key: nvidia-kmod-repo-${{ needs.nvidia-kmod.outputs.kernelver }}-${{ needs.nvidia-kmod.outputs.nvidiaver }}
 
-      - name: Set up ORAS
-        uses: oras-project/setup-oras@8d34698a59f5ffe24821f0b48ab62a3de8b64b20
-
       - name: Specify repo path
         run: |
           sed -i "s|@@PATH@@|$(realpath nvidia-kmod-repo)|" nvidia.repo
