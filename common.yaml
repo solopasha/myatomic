@@ -86,6 +86,7 @@ packages:
   - default-fonts-other-sans
   - default-fonts-other-serif
   - dhcp-client
+  - distrobox
   - dnf5
   - dnf5-plugins
   - dnsmasq
@@ -164,11 +165,9 @@ packages:
   - NetworkManager-wifi
   - nfs-utils
   - nss-altfiles
-  - nss-altfiles
   - nss-mdns
   - ntfs-3g
   - ntfsprogs
-  - nvidia-gpu-firmware
   - nvme-cli
   - open-vm-tools-desktop
   - opensc
@@ -281,6 +280,7 @@ exclude-packages:
   - fuse
   - fuse-libs
   - ModemManager
+  - nvidia-gpu-firmware
 
 postprocess:
   - |
