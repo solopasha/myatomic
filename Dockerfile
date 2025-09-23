@@ -1,4 +1,4 @@
-ARG VERSION=42
+ARG VERSION=43
 
 FROM registry.fedoraproject.org/fedora-minimal:$VERSION
 
