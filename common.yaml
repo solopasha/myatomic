@@ -1,4 +1,4 @@
-releasever: 43
+releasever: 42
 automatic-version-prefix: '${releasever}.<date:%Y%m%d>'
 mutate-os-release: '${releasever}'
 
@@ -17,7 +17,6 @@ include:
   - composefs.yaml
   - qemu-virt-manager.yaml
   - rpmfusion.yaml
-  - updates-testing.yaml
 
 selinux: true
 documentation: true
@@ -52,6 +51,7 @@ packages:
   - audit
   - b43-fwcutter
   - b43-openfwwf
+  - basesystem
   - bash
   - bash-color-prompt
   - bash-completion
@@ -110,7 +110,9 @@ packages:
   - gamemode
   - git-core
   - glibc
+  - glibc-langpack-de
   - glibc-langpack-en
+  - glibc-langpack-ru
   - gnupg2
   - google-arimo-fonts
   - google-cousine-fonts
