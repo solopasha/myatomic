@@ -1,7 +1,7 @@
 include:
   - common.yaml
 
-ref: solopasha/42/${basearch}/kinoite-unstable
+ref: solopasha/43/${basearch}/kinoite-unstable
 rojig:
   name: fedora-kde
   summary: 'Fedora Kinoite with unstable packages'
@@ -23,10 +23,9 @@ packages:
   - sddm
   - udisks2
   - vlc-plugin-gstreamer
-  - "'qt6-qtwayland >= 6.9.1-3'"
 
 repo-packages:
-  - repo: ghcr-kde
+  - repo: coprdep:copr.fedorainfracloud.org:solopasha:plasma-unstable
     packages:
       - bluedevil
       - breeze-icon-theme
@@ -131,4 +130,3 @@ repos:
   - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty
   - kernel-koji
-  - ghcr-kde

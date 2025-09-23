@@ -7,7 +7,7 @@ metadata_expire=14d
 type=rpm-md
 gpgcheck=1
 repo_gpgcheck=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-$releasever
+gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-2020
 
 [rpmfusion-free-updates]
 name=RPM Fusion for Fedora $releasever - Free - Updates
@@ -18,7 +18,18 @@ enabled_metadata=1
 type=rpm-md
 gpgcheck=1
 repo_gpgcheck=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-$releasever
+gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-2020
+
+[rpmfusion-free-updates-testing]
+name=RPM Fusion for Fedora $releasever - Free - Test Updates
+#baseurl=http://download1.rpmfusion.org/free/fedora/updates/testing/$releasever/$basearch/
+metalink=https://mirrors.rpmfusion.org/metalink?repo=free-fedora-updates-testing-$releasever&arch=$basearch
+enabled=0
+enabled_metadata=0
+type=rpm-md
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-2020
 
 [rpmfusion-nonfree]
 name=RPM Fusion for Fedora $releasever - Nonfree
@@ -30,7 +41,7 @@ metadata_expire=14d
 type=rpm-md
 gpgcheck=1
 repo_gpgcheck=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever
+gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-2020
 
 [rpmfusion-nonfree-updates]
 name=RPM Fusion for Fedora $releasever - Nonfree - Updates
@@ -41,15 +52,15 @@ enabled_metadata=1
 type=rpm-md
 gpgcheck=1
 repo_gpgcheck=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever
+gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-2020
 
-[rpmfusion-nonfree-nvidia-driver-rawhide]
-name=RPM Fusion for Fedora - Nonfree - NVIDIA Driver
-baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/43/$basearch/
-#metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-43&arch=$basearch
-enabled=1
+[rpmfusion-nonfree-updates-testing]
+name=RPM Fusion for Fedora $releasever - Nonfree - Test Updates
+#baseurl=http://download1.rpmfusion.org/nonfree/fedora/updates/testing/$releasever/$basearch/
+metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-updates-testing-$releasever&arch=$basearch
+enabled=0
+enabled_metadata=0
 type=rpm-md
 gpgcheck=1
 repo_gpgcheck=0
-gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-43
-skip_if_unavailable=True
+gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-2020
