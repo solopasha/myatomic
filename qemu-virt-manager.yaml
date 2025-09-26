@@ -11,6 +11,7 @@ packages:
   - libvirt-daemon-plugin-lockd
   - libvirt-daemon-proxy
   - qemu-kvm
+  - qemu-system-aarch64
   - qemu-user-static-aarch64
   - virt-install
   - virt-manager
