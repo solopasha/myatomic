@@ -156,7 +156,6 @@ packages:
   - mcelog
   - mdadm
   - mesa-dri-drivers
-  - mesa-vulkan-drivers
   - microcode_ctl
   - mtr
   - ncurses
