@@ -248,7 +248,6 @@ jobs:
       - name: Figure out version
         id: buildid
         run: |
-          set -x
           date_now="$(date -u "+%Y%m%d")"
           fedora_version="$(rpm-ostree compose tree --print-only kinoite.yaml | jq -r '."mutate-os-release"')"
           version_remote="$(skopeo inspect "docker://${IMAGENAME}:${fedora_version}" | jq -r '.Labels."org.opencontainers.image.version"' || :)"
