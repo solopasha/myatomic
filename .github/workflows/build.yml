@@ -135,6 +135,7 @@ jobs:
       - name: Prepare
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
+          echo "%_without_kmod_nvidia_detect 1" > /etc/rpm/macros.nvidia-kmod
           dnf -y \
             --setopt=install_weak_deps=0 \
             install \
@@ -159,7 +160,6 @@ jobs:
       - name: Build kmod-nvidia
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          echo "%_without_kmod_nvidia_detect 1" > /etc/rpm/macros.nvidia-kmod
           akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}.$(uname -m)"
           modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}.$(uname -m)"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
             (cat /var/cache/akmods/nvidia/*-for-*.log && exit 1)
