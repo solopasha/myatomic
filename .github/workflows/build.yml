@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  kernel: 6.16.10-200.fc42
+  kernel: 6.16.11-200.fc42
 
 jobs:
   kernel:
