@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  kernel: 6.17.5-200.fc42
+  kernel: latest
 
 jobs:
   kernel:
@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Check if repo exists
         if: env.kernel != 'latest'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         id: kernelcache
         with:
           lookup-only: true
@@ -54,7 +54,7 @@ jobs:
 
       - name: Save repo
         if: steps.kernelcache.outputs.cache-hit != 'true' && env.kernel != 'latest'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: kernel-repo
           key: kernel-repo-${{ env.kernel }}
@@ -73,16 +73,16 @@ jobs:
       - name: Repo
         run: |
           cat << 'EOF' > /etc/yum.repos.d/nvidia-build.repo
-          [nvidia-build]
-          name=solopasha/nvidia-build
-          baseurl=https://solopasha.github.io/nvidia-build/
-          type=rpm-md
-          skip_if_unavailable=False
-          gpgcheck=1
-          gpgkey=https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
-          repo_gpgcheck=0
+          [rpmfusion-nonfree-nvidia-driver-rawhide]
+          name=RPM Fusion for Fedora - Nonfree - NVIDIA Driver
+          baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/$releasever/$basearch/
+          #metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-$releasever&arch=$basearch
           enabled=1
-          enabled_metadata=1
+          type=rpm-md
+          gpgcheck=1
+          repo_gpgcheck=0
+          gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever
+          skip_if_unavailable=True
           EOF
 
       - name: Get latest kernel version
@@ -97,11 +97,11 @@ jobs:
       - name: Get latest nvidia version
         id: nvidiaver
         run: |
-          echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=nvidia-build \
+          echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=rpmfusion-nonfree\* \
                           rq akmod-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}')" >> $GITHUB_OUTPUT
 
       - name: Check if kmod is up to date
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         id: repocache
         with:
           lookup-only: true
@@ -110,7 +110,7 @@ jobs:
 
       - name: Download kernel repo
         if: steps.repocache.outputs.cache-hit != 'true' && env.kernel != 'latest'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           fail-on-cache-miss: true
           path: kernel-repo
@@ -135,7 +135,6 @@ jobs:
       - name: Prepare
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
-          echo "%_without_kmod_nvidia_detect 1" > /etc/rpm/macros.nvidia-kmod
           dnf -y \
             --setopt=install_weak_deps=0 \
             install \
@@ -145,7 +144,7 @@ jobs:
 
       - name: Checkout
         if: steps.repocache.outputs.cache-hit != 'true'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -161,7 +160,7 @@ jobs:
         if: steps.repocache.outputs.cache-hit != 'true'
         run: |
           akmods --force --kernel "${{ steps.kernelver.outputs.kernelver }}.$(uname -m)"
-          modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}.$(uname -m)"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko > /dev/null || \
+          modinfo /usr/lib/modules/"${{ steps.kernelver.outputs.kernelver }}.$(uname -m)"/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz > /dev/null || \
             (cat /var/cache/akmods/nvidia/*-for-*.log && exit 1)
           mkdir nvidia-kmod-repo
           cp /var/cache/akmods/nvidia/*.rpm nvidia-kmod-repo
@@ -186,7 +185,7 @@ jobs:
 
       - name: Save repo
         if: steps.repocache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: nvidia-kmod-repo
           key: nvidia-kmod-repo-${{ steps.kernelver.outputs.kernelver }}-${{ steps.nvidiaver.outputs.nvidiaver }}
@@ -216,20 +215,20 @@ jobs:
           cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
           cp /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$(rpm -E %fedora) /etc/pki/rpm-gpg/
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Download kernel repo
         if: env.kernel != 'latest'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           fail-on-cache-miss: true
           path: kernel-repo
           key: kernel-repo-${{ env.kernel }}
 
       - name: Download nvidia repo
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           fail-on-cache-miss: true
           path: nvidia-kmod-repo
@@ -279,7 +278,7 @@ jobs:
           rpm-ostree compose image \
             --cachedir=cache \
             --initialize \
-            --max-layers 96 \
+            --max-layers 265 \
             --format oci \
             --label="org.opencontainers.image.version=${{ steps.buildid.outputs.fedora_version }}.${{ steps.buildid.outputs.buildid }}" \
             "kinoite.yaml" \

@@ -1,10 +1,23 @@
-[ghcr-kde]
-name=solopasha/kde6-copr
-baseurl=https://solopasha.github.io/kde6-copr/unstable/
+[testrpm-github:unstable]
+name=solopashachas/testrpm (GitHub) - Unstable Fedora $releasever
+baseurl=https://solopashachas.github.io/testrpm/unstable-$releasever/
 type=rpm-md
-skip_if_unavailable=False
+skip_if_unavailable=True
 gpgcheck=1
-gpgkey=https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
+gpgkey=https://raw.githubusercontent.com/solopashachas/testrpm/refs/heads/unstable/RPM-GPG-KEY-solopashachas
 repo_gpgcheck=0
 enabled=1
 enabled_metadata=1
+metadata_expire=6h
+
+[testrpm-github:gear]
+name=solopashachas/testrpm (GitHub) - KDE Gear Fedora $releasever
+baseurl=https://solopashachas.github.io/testrpm/gear-$releasever/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://raw.githubusercontent.com/solopashachas/testrpm/refs/heads/unstable/RPM-GPG-KEY-solopashachas
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+metadata_expire=6h

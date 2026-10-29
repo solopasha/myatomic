@@ -1,7 +1,7 @@
 include:
   - common.yaml
 
-ref: solopasha/42/${basearch}/kinoite-unstable
+ref: solopasha/44/${basearch}/kinoite-unstable
 rojig:
   name: fedora-kde
   summary: 'Fedora Kinoite with unstable packages'
@@ -17,16 +17,13 @@ packages:
   - fprintd-pam
   - kde-settings-pulseaudio
   - libappindicator-gtk3
-  - phonon-qt6-backend-vlc
   - pinentry-qt
   - samba-usershares
-  - sddm
   - udisks2
-  - vlc-plugin-gstreamer
-  - "'qt6-qtwayland >= 6.9.1-3'"
+  - qt6-qtwayland
 
 repo-packages:
-  - repo: ghcr-kde
+  - repo: testrpm-github:unstable
     packages:
       - bluedevil
       - breeze-icon-theme
@@ -53,13 +50,11 @@ repo-packages:
       - plasma-welcome
       - plasma-workspace
       - polkit-kde
-      - sddm-kcm
-      - sddm-wayland-plasma
+      - plasma-login-manager
       - spectacle
       - plasma-desktop
       - plasma-desktop-doc
-      - sddm-breeze
-  - repo: copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
+  - repo: testrpm-github:gear
     packages:
       - ark
       - dolphin
@@ -86,8 +81,11 @@ repo-packages:
       - signon-kwallet-extension
 
 remove-from-packages:
-  - ['kde-settings', '/usr/share/kde-settings/kde-profile/default/xdg/kwinrc',
-      '/usr/share/kde-settings/kde-profile/default/xdg/plasma_workspace.notifyrc']
+  - [
+      'kde-settings',
+      '/usr/share/kde-settings/kde-profile/default/xdg/kwinrc',
+      '/usr/share/kde-settings/kde-profile/default/xdg/plasma_workspace.notifyrc',
+    ]
 
 # Make sure the following are not pulled in when Recommended by other packages
 exclude-packages:
@@ -124,11 +122,74 @@ exclude-packages:
 repos:
   - fedora
   - updates
-  - copr:copr.fedorainfracloud.org:solopasha:kde-gear-unstable
-  - coprdep:copr.fedorainfracloud.org:solopasha:plasma-unstable
+  - testrpm-github:gear
+  - testrpm-github:unstable
   - nvidia-kmod
-  - nvidia-build
   - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty
   - kernel-koji
-  - ghcr-kde
+  - rpmfusion-nonfree-nvidia-driver-rawhide
+
+postprocess:
+  # Workaroud for missing shadow & gshadow entries for plasmalogin. See:
+  # https://forge.fedoraproject.org/kde/tickets/issues/684
+  # For more details why this happens and a potential proper fix, see:
+  # - https://github.com/bootc-dev/bootc/issues/1179
+  # - https://github.com/coreos/fedora-coreos-tracker/issues/1599
+  # - https://github.com/coreos/rpm-ostree/issues/49
+  - |
+    #!/bin/bash
+    set -xeuo pipefail
+
+    cat > /usr/lib/systemd/system/fedora-kinoite-plasmalogin-workaround.service << 'EOF'
+    [Unit]
+    Description=Workaround for missing plasmalogin entries in /etc/shadow & /etc/gshadow on Kinoite
+    Documentation=https://forge.fedoraproject.org/kde/SIG/issues/684
+    ConditionPathIsReadWrite=/etc
+    ConditionPathExists=/run/ostree-booted
+    ConditionPathExists=!/etc/.fedora-kinoite-plasmalogin-workaround
+    Before=plasmalogin.service
+
+    [Service]
+    Type=oneshot
+    RemainAfterExit=yes
+    ExecStart=/usr/libexec/fedora-kinoite-plasmalogin-workaround
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    cat > /usr/libexec/fedora-kinoite-plasmalogin-workaround << 'EOF'
+    #!/bin/bash
+    # See: https://forge.fedoraproject.org/kde/tickets/issues/684
+
+    set -euo pipefail
+
+    echo "Checking plasmalogin entries in /etc/shadow & /etc/gshadow"
+
+    if [[ $(grep -c "plasmalogin" "/etc/shadow") -eq 0 ]]; then
+        echo "plasmalogin:!*:::::::" >> "/etc/shadow"
+        echo "Added missing plasmalogin entry to /etc/shadow"
+    else
+        echo "Nothing to do for /etc/shadow"
+    fi
+
+    if [[ $(grep -c "plasmalogin" "/etc/gshadow") -eq 0 ]]; then
+        echo "plasmalogin:!*::" >> "/etc/gshadow"
+        echo "Added missing plasmalogin entry to /etc/gshadow"
+    else
+        echo "Nothing to do for /etc/gshadow"
+    fi
+
+    echo "Writing stamp file: /etc/.fedora-kinoite-plasmalogin-workaround"
+    touch /etc/.fedora-kinoite-plasmalogin-workaround
+    EOF
+
+    chmod a+x /usr/libexec/fedora-kinoite-plasmalogin-workaround
+
+    cat > /usr/lib/systemd/system-preset/82-kinoite.preset << 'EOF'
+    # See: https://forge.fedoraproject.org/kde/tickets/issues/684
+    enable fedora-kinoite-plasmalogin-workaround.service
+    EOF
+
+    systemctl preset fedora-kinoite-plasmalogin-workaround.service
