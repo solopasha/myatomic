@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir kernel-repo
           pushd kernel-repo > /dev/null
-          koji download-build -a "$(uname -m)" -a noarch --key=105ef944 kernel-${{ env.kernel }}
+          koji download-build -a "$(uname -m)" -a noarch --key=6d9f90a6 kernel-${{ env.kernel }}
           rm -rf -- *-debug-* *-uki-virt-* *-selftests-internal-* kernel-doc-*
 
       - name: Create repo
@@ -75,14 +75,13 @@ jobs:
           cat << 'EOF' > /etc/yum.repos.d/nvidia-build.repo
           [rpmfusion-nonfree-nvidia-driver-rawhide]
           name=RPM Fusion for Fedora - Nonfree - NVIDIA Driver
-          baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/$releasever/$basearch/
-          #metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-$releasever&arch=$basearch
+          #baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/$releasever/$basearch/
+          metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-rawhide&arch=$basearch
           enabled=1
           type=rpm-md
           gpgcheck=1
           repo_gpgcheck=0
           gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever
-          skip_if_unavailable=True
           EOF
 
       - name: Get latest kernel version

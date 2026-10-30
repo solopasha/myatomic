@@ -6,6 +6,7 @@ repo-packages:
   - repo: copr:copr.fedorainfracloud.org:solopasha:playground
     packages:
       - nvidia-container-toolkit
+      - grubby-dummy
 
 packages:
   - nvidia-modprobe
@@ -16,6 +17,9 @@ packages:
   - xorg-x11-drv-nvidia-cuda-libs
   - xorg-x11-drv-nvidia-libs
   - xorg-x11-drv-nvidia-power
+
+repos:
+  - rpmfusion-nonfree-nvidia-driver-rawhide
 
 postprocess:
   - |

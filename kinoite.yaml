@@ -128,7 +128,6 @@ repos:
   - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty
   - kernel-koji
-  - rpmfusion-nonfree-nvidia-driver-rawhide
 
 postprocess:
   # Workaroud for missing shadow & gshadow entries for plasmalogin. See:

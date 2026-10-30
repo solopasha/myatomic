@@ -45,11 +45,10 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever
 
 [rpmfusion-nonfree-nvidia-driver-rawhide]
 name=RPM Fusion for Fedora - Nonfree - NVIDIA Driver
-baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/$releasever/$basearch/
-#metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-$releasever&arch=$basearch
+#baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/46/$basearch/
+metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-rawhide&arch=$basearch
 enabled=1
 type=rpm-md
 gpgcheck=1
 repo_gpgcheck=0
-gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever
-skip_if_unavailable=True
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever

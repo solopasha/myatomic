@@ -18,6 +18,11 @@ packages:
   - virt-viewer
 
 exclude-packages:
+  - libvirt-daemon-driver-storage-gluster
+  - libvirt-daemon-driver-storage-iscsi
+  - libvirt-daemon-driver-storage-mpath
+  - libvirt-daemon-driver-storage-rbd
+  - libvirt-daemon-driver-storage-scsi
   - nbdkit
   - nbdkit-curl-plugin
   - nbdkit-ssh-plugin

@@ -85,6 +85,8 @@ packages:
   - default-fonts-other-sans
   - default-fonts-other-serif
   - distrobox
+  - dnf5
+  - dnf5-plugins
   - dnsmasq
   - e2fsprogs
   - ethtool
@@ -136,7 +138,11 @@ packages:
   - kernel-modules
   - kernel-modules-extra
   - kitty
+  - langpacks-en
   - less
+  - liberation-mono-fonts
+  - liberation-sans-fonts
+  - liberation-serif-fonts
   - libertas-firmware
   - libglvnd-gles
   - libva-intel-media-driver
@@ -149,9 +155,7 @@ packages:
   - mcelog
   - mdadm
   - mesa-dri-drivers
-  - mesa-vulkan-drivers
   - microcode_ctl
-  - mpage
   - mtr
   - ncurses
   - NetworkManager
@@ -169,11 +173,8 @@ packages:
   - openssh-clients
   - openssh-server
   - openssl
-  - pam_afs_session
-  - paps
   - passwdqc
   - pciutils
-  - pinfo
   - pipewire-alsa
   - pipewire-config-raop
   - pipewire-gstreamer
@@ -281,6 +282,8 @@ exclude-packages:
   - fuse-libs
   - ModemManager
   - nvidia-gpu-firmware
+  - lsb_release
+  - redhat-lsb
 
 postprocess:
   - |
