@@ -1,12 +1,11 @@
-ARG VERSION=44
+ARG VERSION=45
 
 FROM registry.fedoraproject.org/fedora-minimal:$VERSION
 
-RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
+RUN rm /usr/share/dnf5/repos.d/fedora-cisco-openh264.repo && \
         dnf -y up && dnf -y in --setopt=install_weak_deps=False \
         buildah \
         createrepo_c \
-        dbus-daemon \
         distribution-gpg-keys \
         fedora-repos-archive \
         file \
@@ -14,6 +13,7 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
         git-core \
         gnupg2 \
         jq \
+        koji \
         ostree \
         podman \
         rpm-ostree \
@@ -21,6 +21,7 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
         selinux-policy-targeted \
         skopeo \
         tar \
+        yq \
         zstd && \
         dnf clean all && \
         useradd -M builduser

@@ -15,6 +15,7 @@ concurrency:
 
 env:
   kernel: latest
+  signkey: f577861e
 
 jobs:
   kernel:
@@ -33,17 +34,12 @@ jobs:
           path: kernel-repo
           key: kernel-repo-${{ env.kernel }}
 
-      - name: Prepare
-        if: steps.kernelcache.outputs.cache-hit != 'true' && env.kernel != 'latest'
-        run: |
-          dnf --nodocs -y -x systemd* install koji
-
       - name: Download
         if: steps.kernelcache.outputs.cache-hit != 'true' && env.kernel != 'latest'
         run: |
           mkdir kernel-repo
           pushd kernel-repo > /dev/null
-          koji download-build -a "$(uname -m)" -a noarch --key=6d9f90a6 kernel-${{ env.kernel }}
+          koji download-build -a "$(uname -m)" -a noarch --key=${{ env.signkey }} kernel-${{ env.kernel }}
           rm -rf -- *-debug-* *-uki-virt-* *-selftests-internal-* kernel-doc-*
 
       - name: Create repo
@@ -124,7 +120,7 @@ jobs:
           baseurl=file:///${GITHUB_WORKSPACE}/kernel-repo/
           skip_if_unavailable=False
           gpgcheck=1
-          gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-\$releasever-\$basearch
+          gpgkey=file:///usr/share/pki/rpm-gpg/RPM-GPG-KEY-fedora-\$releasever-\$basearch
           repo_gpgcheck=0
           enabled=1
           enabled_metadata=1
@@ -266,6 +262,24 @@ jobs:
 
           echo "fedora_version=${fedora_version}" >> $GITHUB_OUTPUT
           echo "buildid=${buildid}" >> $GITHUB_OUTPUT
+
+      - name: Create custom repo
+        run: |
+          mkdir -p custom-repo
+          sed -i "s|@@PATH@@|$(realpath custom-repo)|" custom-repo.repo
+          mapfile -t kojipkgs < <(yq -r '.koji[]' custom-repo.yaml)
+          mapfile -t urls < <(yq -r '.url[]' custom-repo.yaml)
+          pushd custom-repo > /dev/null
+          for pkg in "${kojipkgs[@]}"; do
+            koji download-build -a "$(uname -m)" -a noarch --key=${{ env.signkey }} "${pkg}"
+          done
+          for pkg in "${urls[@]}"; do
+            if [[ "${pkg}" =~ rpmfusion ]]; then
+              curl_extra=(-u rpmfusion:rpmfusion)
+            fi
+            curl "${curl_extra[@]}" --connect-timeout 10 --retry 7 --retry-connrefused -Ss -LO "${pkg}"
+          done
+          createrepo_c .
 
       - name: Build
         run: |

@@ -1,4 +1,4 @@
-releasever: 44
+releasever: 45
 automatic-version-prefix: '${releasever}.<date:%Y%m%d>'
 mutate-os-release: '${releasever}'
 
@@ -138,8 +138,10 @@ packages:
   - kernel-modules
   - kernel-modules-extra
   - kitty
+  - kmscon
   - langpacks-en
   - less
+  - libcurl
   - liberation-mono-fonts
   - liberation-sans-fonts
   - liberation-serif-fonts
@@ -248,8 +250,8 @@ exclude-packages:
   - dnf
   - dnf-plugins-core
   # https://github.com/fedora-silverblue/issue-tracker/issues/517
-  #- grubby
-  #- sdubby
+  - grubby
+  - sdubby
   # Exclude Tk. We can not exclude Tcl as it is neeeded for usb_modeswitch
   - tk
   # See: https://github.com/fedora-silverblue/issue-tracker/issues/646
@@ -284,6 +286,17 @@ exclude-packages:
   - nvidia-gpu-firmware
   - lsb_release
   - redhat-lsb
+  - NetworkManager-fortisslvpn
+  - NetworkManager-iodine
+  - NetworkManager-l2tp
+  - NetworkManager-libreswan
+  - NetworkManager-pptp
+  - NetworkManager-ssh
+  - NetworkManager-sstp-gnome
+  - NetworkManager-strongswan
+  - NetworkManager-vpnc
+  - libcurl-minimal
+  - yama-ptrace-enable
 
 postprocess:
   - |

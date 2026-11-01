@@ -1,7 +1,7 @@
 include:
   - common.yaml
 
-ref: solopasha/44/${basearch}/kinoite-unstable
+ref: solopasha/45/${basearch}/kinoite-unstable
 rojig:
   name: fedora-kde
   summary: 'Fedora Kinoite with unstable packages'
@@ -9,8 +9,6 @@ rojig:
 
 packages:
   - fedora-release-kinoite
-  # Make sure that modem support is installed
-  - NetworkManager-ppp
   # Explicitely not included via comps
   # See: https://pagure.io/fedora-kde/SIG/issue/295
   - plasma-welcome-fedora
@@ -20,10 +18,9 @@ packages:
   - pinentry-qt
   - samba-usershares
   - udisks2
-  - qt6-qtwayland
 
 repo-packages:
-  - repo: testrpm-github:unstable
+  - repo: kde6-copr-github:unstable
     packages:
       - bluedevil
       - breeze-icon-theme
@@ -54,7 +51,7 @@ repo-packages:
       - spectacle
       - plasma-desktop
       - plasma-desktop-doc
-  - repo: testrpm-github:gear
+  - repo: kde6-copr-github:gear
     packages:
       - ark
       - dolphin
@@ -120,14 +117,15 @@ exclude-packages:
   - plasma-discover-rpm-ostree
 
 repos:
-  - fedora
-  - updates
-  - testrpm-github:gear
-  - testrpm-github:unstable
-  - nvidia-kmod
-  - copr:copr.fedorainfracloud.org:solopasha:playground
   - copr:copr.fedorainfracloud.org:solopasha:kitty
+  - copr:copr.fedorainfracloud.org:solopasha:playground
+  - custom-repo
+  - fedora
+  - kde6-copr-github:gear
+  - kde6-copr-github:unstable
   - kernel-koji
+  - nvidia-kmod
+  - updates
 
 postprocess:
   # Workaroud for missing shadow & gshadow entries for plasmalogin. See:
