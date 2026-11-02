@@ -69,6 +69,7 @@ packages:
   - compsize
   - coreutils
   - cpio
+  - crun-krun
   - cryptsetup
   - curl
   - cyrus-sasl-plain
@@ -217,7 +218,6 @@ packages:
   - tar
   - thermald
   - time
-  - tiwilink-firmware
   - toolbox
   - tree
   - unzip
