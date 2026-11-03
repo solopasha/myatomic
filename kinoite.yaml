@@ -143,7 +143,7 @@ postprocess:
     Description=Workaround for missing plasmalogin entries in /etc/shadow & /etc/gshadow on Kinoite
     Documentation=https://forge.fedoraproject.org/kde/SIG/issues/684
     ConditionPathIsReadWrite=/etc
-    ConditionPathExists=/run/ostree-booted
+    ConditionPathIsMountPoint=/sysroot
     ConditionPathExists=!/etc/.fedora-kinoite-plasmalogin-workaround
     Before=plasmalogin.service
 

@@ -35,3 +35,12 @@ postprocess:
     # Add support for systemd-cryptsetup and tpm2-tss LUKS locking
     add_dracutmodules+=" tpm2-tss "
     EOF
+
+  - |
+    #!/usr/bin/env bash
+    set -xeuo pipefail
+
+    cat > /usr/lib/dracut/dracut.conf.d/20-atomic-bootc-ostree.conf << 'EOF'
+    # So the system is actually bootable when derived container builds regenerate the initramfs
+    add_dracutmodules+=" ostree bootc "
+    EOF

@@ -292,7 +292,7 @@ exclude-packages:
   - NetworkManager-libreswan
   - NetworkManager-pptp
   - NetworkManager-ssh
-  - NetworkManager-sstp-gnome
+  - NetworkManager-sstp
   - NetworkManager-strongswan
   - NetworkManager-vpnc
   - libcurl-minimal
@@ -340,7 +340,7 @@ postprocess:
     Description=Workaround for Atomic Desktops to refresh the appstream cache
     Documentation=https://gitlab.com/fedora/ostree/sig/-/work_items/103
     ConditionPathIsReadWrite=/var
-    ConditionPathExists=/run/ostree-booted
+    ConditionPathIsMountPoint=/sysroot
     After=local-fs.target
 
     [Service]
@@ -369,7 +369,7 @@ postprocess:
     Description=Workaround for Atomic Desktops to update mandb cache
     Documentation=https://gitlab.com/fedora/ostree/sig/-/work_items/62
     ConditionPathIsReadWrite=/var
-    ConditionPathExists=/run/ostree-booted
+    ConditionPathIsMountPoint=/sysroot
     After=local-fs.target
 
     [Service]
