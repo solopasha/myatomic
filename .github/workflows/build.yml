@@ -69,15 +69,16 @@ jobs:
       - name: Repo
         run: |
           cat << 'EOF' > /etc/yum.repos.d/nvidia-build.repo
-          [rpmfusion-nonfree-nvidia-driver-rawhide]
-          name=RPM Fusion for Fedora - Nonfree - NVIDIA Driver
-          #baseurl=https://download1.rpmfusion.org/nonfree/fedora/nvidia-driver/$releasever/$basearch/
-          metalink=https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-nvidia-driver-rawhide&arch=$basearch
-          enabled=1
+          [nvidia-build]
+          name=solopasha/nvidia-build
+          baseurl=https://solopasha.github.io/nvidia-build/
           type=rpm-md
+          skip_if_unavailable=False
           gpgcheck=1
+          gpgkey=https://raw.githubusercontent.com/solopasha/kde6-copr/refs/heads/unstable/RPM-GPG-KEY-solopasha
           repo_gpgcheck=0
-          gpgkey=file:///usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-$releasever
+          enabled=1
+          enabled_metadata=1
           EOF
 
       - name: Get latest kernel version
@@ -92,7 +93,7 @@ jobs:
       - name: Get latest nvidia version
         id: nvidiaver
         run: |
-          echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=rpmfusion-nonfree\* \
+          echo "nvidiaver=$(dnf -y -q --disablerepo=\* --enablerepo=nvidia-build \
                           rq akmod-nvidia --latest-limit=1 --qf '%{VERSION}-%{RELEASE}')" >> $GITHUB_OUTPUT
 
       - name: Check if kmod is up to date

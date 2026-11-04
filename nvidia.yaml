@@ -19,7 +19,7 @@ packages:
   - xorg-x11-drv-nvidia-power
 
 repos:
-  - rpmfusion-nonfree-nvidia-driver-rawhide
+  - nvidia-build
 
 postprocess:
   - |
