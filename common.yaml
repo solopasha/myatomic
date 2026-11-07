@@ -16,7 +16,6 @@ include:
   - kernel-install.yaml
   - composefs.yaml
   - qemu-virt-manager.yaml
-  - rpmfusion.yaml
   - dynamic-ugid-ownership-fixes.yaml
 
 selinux: true
@@ -158,6 +157,7 @@ packages:
   - mcelog
   - mdadm
   - mesa-dri-drivers
+  - mesa-vulkan-drivers
   - microcode_ctl
   - mtr
   - ncurses
