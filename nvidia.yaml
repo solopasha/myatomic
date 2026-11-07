@@ -3,20 +3,17 @@ repo-packages:
     packages:
       - 'kmod-nvidia*'
 
-  - repo: copr:copr.fedorainfracloud.org:solopasha:playground
+  - repo: nvidia-build
     packages:
       - nvidia-container-toolkit
-      - grubby-dummy
-
-packages:
-  - nvidia-modprobe
-  - nvidia-persistenced
-  - nvidia-settings
-  - xorg-x11-drv-nvidia
-  - xorg-x11-drv-nvidia-cuda
-  - xorg-x11-drv-nvidia-cuda-libs
-  - xorg-x11-drv-nvidia-libs
-  - xorg-x11-drv-nvidia-power
+      - nvidia-modprobe
+      - nvidia-persistenced
+      - nvidia-settings
+      - xorg-x11-drv-nvidia
+      - xorg-x11-drv-nvidia-cuda
+      - xorg-x11-drv-nvidia-cuda-libs
+      - xorg-x11-drv-nvidia-libs
+      - xorg-x11-drv-nvidia-power
 
 repos:
   - nvidia-build

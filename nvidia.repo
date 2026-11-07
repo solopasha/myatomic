@@ -6,7 +6,7 @@ gpgcheck=1
 
 [nvidia-build]
 name=solopasha/nvidia-build
-baseurl=https://solopasha.github.io/nvidia-build/
+baseurl=https://solopasha.github.io/nvidia-build/unstable-$releasever/
 type=rpm-md
 skip_if_unavailable=True
 gpgcheck=1
