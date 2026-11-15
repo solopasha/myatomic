@@ -115,6 +115,7 @@ exclude-packages:
   - plasma-discover
   - plasma-discover-notifier
   - plasma-discover-rpm-ostree
+  - plasma-keyboard
 
 repos:
   - copr:copr.fedorainfracloud.org:solopasha:kitty
