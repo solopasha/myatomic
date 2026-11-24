@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  kernel: latest
+  kernel: 7.3.5-300.fc45
   signkey: f577861e
 
 jobs:
